@@ -1,3 +1,4 @@
+import 'package:cuci_mobil/menu/konten/konten_home.dart';
 import 'package:flutter/material.dart';
 
 class home extends StatelessWidget {
@@ -78,59 +79,69 @@ class home extends StatelessWidget {
             physics: NeverScrollableScrollPhysics(),
             itemCount: 4,
             itemBuilder: (context, index) {
-              return Container(
-                padding: EdgeInsets.all(8.0),
-                margin: EdgeInsets.symmetric(vertical: 8.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              "https://img.freepik.com/free-photo/beautiful-car-washing-service_23-2149212221.jpg?t=st=1715257802~exp=1715261402~hmac=8b9cb8fa19b62d42397c834277357c1f047029870044bbf7ae150377b8b3e330&w=740",
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Konten(),
+                      ));
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8.0),
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                "https://img.freepik.com/free-photo/beautiful-car-washing-service_23-2149212221.jpg?t=st=1715257802~exp=1715261402~hmac=8b9cb8fa19b62d42397c834277357c1f047029870044bbf7ae150377b8b3e330&w=740",
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            fit: BoxFit.cover,
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                          borderRadius: BorderRadius.circular(5),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Nama tempat",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                        Text(
-                          "Alamat",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.yellow),
-                            Text("4.5"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Nama tempat",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                          Text(
+                            "Alamat",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.star, color: Colors.yellow),
+                              Text("4.5"),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
