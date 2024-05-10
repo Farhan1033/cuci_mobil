@@ -11,27 +11,44 @@ class _KontenState extends State<Konten> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView.builder(
-      itemCount: 2,
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: SizedBox(
-            height: 100,
-            width: 100,
-            child: Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          "https://img.freepik.com/free-photo/beautiful-car-washing-service_23-2149212221.jpg?t=st=1715257802~exp=1715261402~hmac=8b9cb8fa19b62d42397c834277357c1f047029870044bbf7ae150377b8b3e330&w=740"),
-                      fit: BoxFit.cover)),
-            ),
-          ),
-          title: Text("Berkah Wash Car"),
-          subtitle: Row(
-            children: [Icon(Icons.star, color: Colors.yellow), Text("4.5")],
-          ),
-        );
-      },
-    ));
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(0),
+            child: AppBar(
+              toolbarHeight: 0,
+            )),
+        body: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 32.0, horizontal: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Icon(Icons.arrow_back_sharp),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ));
   }
 }
