@@ -179,7 +179,8 @@ class _KontenState extends State<Konten> {
           width: 350,
           child: Container(
             decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(10)),
+                color: Color.fromRGBO(139, 219, 154, 1),
+                borderRadius: BorderRadius.circular(10)),
             child: Center(
               child: Text(
                 "BOOKING NOW",

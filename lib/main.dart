@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             });
           },
           currentIndex: _currentIndex,
-          selectedItemColor: Colors.green,
+          selectedItemColor: Color.fromRGBO(139, 219, 154, 1),
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           items: const [

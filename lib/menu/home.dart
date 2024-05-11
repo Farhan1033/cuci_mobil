@@ -30,7 +30,7 @@ class home extends StatelessWidget {
             child: Center(
               child: Container(
                 height: 225,
-                width: 345,
+                width: 380,
                 decoration: BoxDecoration(
                   color: Colors.green,
                   borderRadius: BorderRadius.circular(15),
@@ -51,7 +51,7 @@ class home extends StatelessWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.search),
-                        hintText: "Cari Lokasi Terdekat",
+                        hintText: "Cari Cuci Mobil",
                         border: OutlineInputBorder(
                           borderSide: BorderSide(width: 2),
                           borderRadius: BorderRadius.circular(5),
