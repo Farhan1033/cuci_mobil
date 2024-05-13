@@ -1,4 +1,6 @@
 import 'package:cuci_mobil/menu/booking.dart';
+import 'package:cuci_mobil/menu/konten/options_konten/about.dart';
+import 'package:cuci_mobil/menu/konten/options_konten/review.dart';
 import 'package:flutter/material.dart';
 
 class Konten extends StatefulWidget {
@@ -9,21 +11,120 @@ class Konten extends StatefulWidget {
 }
 
 class _KontenState extends State<Konten> {
-  String _selectedOption = "";
+  int pilihan = 0;
+  List options = [About_konten(), Review_konten()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _headerSection(),
-          _infoSection(),
-          _optionsSection(),
-          Spacer(),
-          _bookingButton(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _headerSection(),
+            _infoSection(),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              padding: EdgeInsets.only(right: 200.0),
+              width: MediaQuery.of(context).size.width,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            pilihan = 0;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: pilihan == 0
+                                ? Color.fromRGBO(139, 219, 154, 1)
+                                : Colors.transparent,
+                          ),
+                          child: Center(
+                              child: Text("About",
+                                  style: TextStyle(color: pilihan == 0
+                                          ? Colors.white
+                                          : Colors.black),
+                                  textAlign: TextAlign.center)),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            pilihan = 1;
+                          });
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: pilihan == 1
+                                ? Color.fromRGBO(139, 219, 154, 1)
+                                : Colors.transparent,
+                          ),
+                          child: Center(
+                              child: Text("Review",
+                                  style: TextStyle(
+                                      color: pilihan == 1
+                                          ? Colors.white
+                                          : Colors.black),
+                                  textAlign: TextAlign.center)),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              decoration: BoxDecoration(color: Colors.yellow),
+              child: options[pilihan],
+            ),
+            SizedBox(height: 10),
+            SizedBox(
+              height: 90,
+              width: MediaQuery.of(context).size.width,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: _bookingButton(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -37,7 +138,8 @@ class _KontenState extends State<Konten> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildIconButton(Icons.arrow_back_sharp, () => Navigator.pop(context)),
+          _buildIconButton(
+              Icons.arrow_back_sharp, () => Navigator.pop(context)),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -74,68 +176,28 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _optionsSection() {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 5,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          _optionButton("About"),
-          _optionButton("Review"),
-        ],
-      ),
-    );
-  }
-
-  Widget _optionButton(String option) {
-    return GestureDetector(
-      onTap: () => setState(() => _selectedOption = option),
-      child: Column(
-        children: [
-          Container(
-            height: 50,
-            width: 80,
-            color: _selectedOption == option ? Colors.green : Colors.transparent,
-            child: Center(child: Text(option)),
-          ),
-          _selectedOption.isNotEmpty
-              ? Text(_selectedOption)
-              : Container(),
-        ],
-      ),
-    );
-  }
-
   Widget _bookingButton() {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Booking()),
       ),
-      child: Container(
-        height: 60,
-        width: 350,
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(139, 219, 154, 1),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(
-            "BOOKING NOW",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+      child: Center(
+        child: Container(
+          height: 60,
+          width: 350,
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(139, 219, 154, 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Text(
+              "BOOKING NOW",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
             ),
           ),
         ),
