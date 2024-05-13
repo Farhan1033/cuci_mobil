@@ -13,11 +13,8 @@ class About_konten extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                  """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget nunc interdum, luctus purus at, mollis tellus. Sed laoreet lobortis lectus, non dictum purus facilisis in. Nunc interdum consequat pellentesque. 
-                  Integer vulputate felis et egestas congue. Integer euismod vestibulum est id finibus. 
-                  Praesent sit amet lobortis magna. Duis pharetra cursus magna, ac accumsan massa facilisis eget. Duis et blandit mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam vulputate ipsum ac aliquam sagittis. 
-                  Duis pretium orci non tellus gravida mattis. Donec sed blandit justo, congue mollis nibh. Morbi ornare sagittis velit ut iaculis. Cras consequat, mauris laoreet semper feugiat, purus diam malesuada elit, 
-                  at rutrum augue ipsum et augue. Ut et risus vehicula felis gravida ornare in eget turpis. Donec non dictum orci, at egestas risus.""",
+                  """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ornare nunc at elementum varius.
+                  Suspendisse magna erat, rhoncus at convallis ut, aliquet non tellus. Pellentesque porta, erat et ornare cursus, erat tellus iaculis velit, et tincidunt tortor leo et quam. Phasellus feugiat rhoncus eros eu egestas. Pellentesque sollicitudin, ex id fringilla ornare, nulla lorem ornare lacus, sed ultricies ante erat in tellus. Nullam laoreet massa vel augue malesuada posuere. Cras id nisi feugiat, pulvinar est in, tincidunt justo. Phasellus iaculis vel neque eget porta.""",
                   textAlign: TextAlign.justify)
             ],
           ),

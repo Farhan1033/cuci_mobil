@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  List menu = [home(), Booking(), Profile()];
+  List menu = [Home(), Booking(), Profile()];
 
   @override
   Widget build(BuildContext context) {

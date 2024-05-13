@@ -1,18 +1,21 @@
 import 'package:cuci_mobil/menu/booking.dart';
 import 'package:cuci_mobil/menu/konten/options_konten/about.dart';
 import 'package:cuci_mobil/menu/konten/options_konten/review.dart';
+import 'package:cuci_mobil/model/model.dart';
 import 'package:flutter/material.dart';
 
 class Konten extends StatefulWidget {
-  const Konten({Key? key}) : super(key: key);
+  final CarWash carWash;
+
+  Konten(this.carWash);
 
   @override
-  State<Konten> createState() => _KontenState();
+  _KontenState createState() => _KontenState();
 }
 
 class _KontenState extends State<Konten> {
-  int pilihan = 0;
-  List options = [About_konten(), Review_konten()];
+  int _pilihan = 0;
+  List<Widget> _options = [About_konten(), Review_konten()];
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +25,8 @@ class _KontenState extends State<Konten> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _headerSection(),
-            _infoSection(),
-            SizedBox(
-              height: 10,
-            ),
+            _headerSection(context, widget.carWash),
+            _infoSection(widget.carWash),
             Container(
               padding: EdgeInsets.only(right: 200.0),
               width: MediaQuery.of(context).size.width,
@@ -50,21 +50,25 @@ class _KontenState extends State<Konten> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            pilihan = 0;
+                            _pilihan = 0;
                           });
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: pilihan == 0
+                            color: _pilihan == 0
                                 ? Color.fromRGBO(139, 219, 154, 1)
                                 : Colors.transparent,
                           ),
                           child: Center(
-                              child: Text("About",
-                                  style: TextStyle(color: pilihan == 0
-                                          ? Colors.white
-                                          : Colors.black),
-                                  textAlign: TextAlign.center)),
+                            child: Text(
+                              "About",
+                              style: TextStyle(
+                                color:
+                                    _pilihan == 0 ? Colors.white : Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -72,24 +76,27 @@ class _KontenState extends State<Konten> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            pilihan = 1;
+                            _pilihan = 1;
                           });
                         },
                         child: Container(
                           width: 100,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: pilihan == 1
+                            color: _pilihan == 1
                                 ? Color.fromRGBO(139, 219, 154, 1)
                                 : Colors.transparent,
                           ),
                           child: Center(
-                              child: Text("Review",
-                                  style: TextStyle(
-                                      color: pilihan == 1
-                                          ? Colors.white
-                                          : Colors.black),
-                                  textAlign: TextAlign.center)),
+                            child: Text(
+                              "Review",
+                              style: TextStyle(
+                                color:
+                                    _pilihan == 1 ? Colors.white : Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ),
                     )
@@ -101,7 +108,7 @@ class _KontenState extends State<Konten> {
               width: MediaQuery.of(context).size.width,
               height: 200,
               decoration: BoxDecoration(color: Colors.yellow),
-              child: options[pilihan],
+              child: _options[_pilihan],
             ),
             SizedBox(height: 10),
             SizedBox(
@@ -120,7 +127,7 @@ class _KontenState extends State<Konten> {
                     ),
                   ],
                 ),
-                child: _bookingButton(),
+                child: _bookingButton(context),
               ),
             ),
           ],
@@ -129,17 +136,18 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _headerSection() {
+  Widget _headerSection(BuildContext context, CarWash carWash) {
     return Container(
       height: 290,
-      color: Colors.blue,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildIconButton(
-              Icons.arrow_back_sharp, () => Navigator.pop(context)),
+            Icons.arrow_back_sharp,
+            () => Navigator.pop(context),
+          ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -152,22 +160,53 @@ class _KontenState extends State<Konten> {
           ),
         ],
       ),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(carWash.imgUrl),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 
-  Widget _infoSection() {
+  Widget _infoSection(CarWash carWash) {
     return Padding(
-      padding: const EdgeInsets.all(18),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _infoCard("Car Washing", Colors.white, FontWeight.bold),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _infoCard("Car Washing", Colors.white, FontWeight.bold),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(Icons.star, color: Colors.yellow),
+                    Text(carWash.ratingTempat, style: TextStyle(fontSize: 16)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 60,
+            width: 300,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.star, color: Colors.yellow),
-                Text("4.5 (500 Reviewer)", style: TextStyle(fontSize: 16)),
+                Text(
+                  carWash.namaTempat,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                Text(
+                  carWash.alamatTempat,
+                  style: TextStyle(fontSize: 16.0),
+                )
               ],
             ),
           ),
@@ -176,7 +215,7 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _bookingButton() {
+  Widget _bookingButton(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,

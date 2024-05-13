@@ -1,8 +1,9 @@
-import 'package:cuci_mobil/menu/konten/konten_home.dart';
 import 'package:flutter/material.dart';
+import 'package:cuci_mobil/menu/konten/konten_home.dart'; // Import file konten.dart
+import 'package:cuci_mobil/model/model.dart';
 
-class home extends StatelessWidget {
-  const home({Key? key}) : super(key: key);
+class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,15 +78,17 @@ class home extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 4,
+            itemCount: CarWash_List.length,
             itemBuilder: (context, index) {
+              CarWash carWash = CarWash_List[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Konten(),
-                      ));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Konten(carWash), // Mengirimkan objek CarWash
+                    ),
+                  );
                 },
                 child: Container(
                   padding: EdgeInsets.all(8.0),
@@ -111,7 +114,7 @@ class home extends StatelessWidget {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage(
-                                "https://img.freepik.com/free-photo/beautiful-car-washing-service_23-2149212221.jpg?t=st=1715257802~exp=1715261402~hmac=8b9cb8fa19b62d42397c834277357c1f047029870044bbf7ae150377b8b3e330&w=740",
+                                carWash.imgUrl,
                               ),
                               fit: BoxFit.cover,
                             ),
@@ -124,18 +127,20 @@ class home extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Nama tempat",
+                            carWash.namaTempat,
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
                           Text(
-                            "Alamat",
+                            carWash.alamatTempat,
                             style: TextStyle(fontSize: 16),
                           ),
                           Row(
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
-                              Text("4.5"),
+                              Text(carWash.ratingTempat),
                             ],
                           ),
                         ],
