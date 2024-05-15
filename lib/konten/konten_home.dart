@@ -22,119 +22,130 @@ class _KontenState extends State<Konten> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _headerSection(context, widget.carWash),
+                _infoSection(widget.carWash),
+                _buildTabBar(),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 200,
+                  decoration: BoxDecoration(color: Colors.yellow),
+                  child: _options[_pilihan],
+                ),
+                SizedBox(height: 10),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildBottomButton(context)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      padding: EdgeInsets.only(right: 200.0),
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Row(
           children: [
-            _headerSection(context, widget.carWash),
-            _infoSection(widget.carWash),
-            Container(
-              padding: EdgeInsets.only(right: 200.0),
-              width: MediaQuery.of(context).size.width,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _pilihan = 0;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: _pilihan == 0
-                                ? Color.fromRGBO(139, 219, 154, 1)
-                                : Colors.transparent,
-                          ),
-                          child: Center(
-                            child: Text(
-                              "About",
-                              style: TextStyle(
-                                color:
-                                    _pilihan == 0 ? Colors.white : Colors.black,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _pilihan = 1;
-                          });
-                        },
-                        child: Container(
-                          width: 100,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: _pilihan == 1
-                                ? Color.fromRGBO(139, 219, 154, 1)
-                                : Colors.transparent,
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Review",
-                              style: TextStyle(
-                                color:
-                                    _pilihan == 1 ? Colors.white : Colors.black,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 200,
-              decoration: BoxDecoration(color: Colors.yellow),
-              child: _options[_pilihan],
-            ),
-            SizedBox(height: 10),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 90,
-                width: MediaQuery.of(context).size.width,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: _bookingButton(context),
-                ),
-              ),
-            ),
+            _buildTabItem("About", 0),
+            _buildTabItem("Review", 1),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabItem(String title, int index) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _pilihan = index;
+          });
+        },
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: _pilihan == index
+                ? Color.fromRGBO(139, 219, 154, 1)
+                : Colors.transparent,
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: _pilihan == index ? Colors.white : Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomButton(BuildContext context) {
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Booking()),
+        ),
+        child: Center(
+          child: Container(
+            height: 100,
+            width: double.infinity,
+            margin: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(139, 219, 154, 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                "BOOKING NOW",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -194,9 +205,7 @@ class _KontenState extends State<Konten> {
               ),
             ],
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           SizedBox(
             height: 60,
             width: 300,
@@ -210,41 +219,11 @@ class _KontenState extends State<Konten> {
                 Text(
                   carWash.alamatTempat,
                   style: TextStyle(fontSize: 16.0),
-                )
+                ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _bookingButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Booking()),
-      ),
-      child: Center(
-        child: Container(
-          height: 60,
-          width: double.infinity,
-          margin: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(139, 219, 154, 1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              "BOOKING NOW",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
