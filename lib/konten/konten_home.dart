@@ -1,8 +1,9 @@
 import 'package:cuci_mobil/menu/booking.dart';
-import 'package:cuci_mobil/menu/konten/options_konten/about.dart';
-import 'package:cuci_mobil/menu/konten/options_konten/review.dart';
+import 'package:cuci_mobil/konten/options_konten/about.dart';
+import 'package:cuci_mobil/konten/options_konten/review.dart';
 import 'package:cuci_mobil/model/model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Konten extends StatefulWidget {
   final CarWash carWash;
@@ -111,23 +112,26 @@ class _KontenState extends State<Konten> {
               child: _options[_pilihan],
             ),
             SizedBox(height: 10),
-            SizedBox(
-              height: 90,
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: 90,
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: _bookingButton(context),
                 ),
-                child: _bookingButton(context),
               ),
             ),
           ],
@@ -224,7 +228,8 @@ class _KontenState extends State<Konten> {
       child: Center(
         child: Container(
           height: 60,
-          width: 350,
+          width: double.infinity,
+          margin: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Color.fromRGBO(139, 219, 154, 1),
             borderRadius: BorderRadius.circular(10),

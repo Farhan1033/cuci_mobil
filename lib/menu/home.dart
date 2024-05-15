@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cuci_mobil/menu/konten/konten_home.dart'; // Import file konten.dart
+import 'package:cuci_mobil/konten/konten_home.dart'; // Import file konten.dart
 import 'package:cuci_mobil/model/model.dart';
 
 class Home extends StatelessWidget {
