@@ -1,4 +1,3 @@
-import 'package:cuci_mobil/menu/booking.dart';
 import 'package:cuci_mobil/model/model.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/cupertino.dart';
