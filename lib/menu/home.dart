@@ -80,13 +80,14 @@ class Home extends StatelessWidget {
             physics: NeverScrollableScrollPhysics(),
             itemCount: CarWash_List.length,
             itemBuilder: (context, index) {
-              CarWash carWash = CarWash_List[index];
+              final carWash = CarWash_List[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Konten(carWash), // Mengirimkan objek CarWash
+                      builder: (context) =>
+                          Konten(carWash), // Mengirimkan objek CarWash
                     ),
                   );
                 },
@@ -140,7 +141,9 @@ class Home extends StatelessWidget {
                           Row(
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
-                              Text(carWash.ratingTempat),
+                              Text(carWash.reviewTempat.toString() +
+                                  " " +
+                                  carWash.ratingTempat),
                             ],
                           ),
                         ],
