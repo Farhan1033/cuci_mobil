@@ -1,6 +1,7 @@
 import 'package:cuci_mobil/model/list_cucimobil.dart';
-import 'package:cuci_mobil/model/list_mobil.dart';
+import 'package:cuci_mobil/screen/booking.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Booking_tempat extends StatefulWidget {
   const Booking_tempat({super.key});
@@ -10,9 +11,35 @@ class Booking_tempat extends StatefulWidget {
 }
 
 class _Booking_tempatState extends State<Booking_tempat> {
-  var _idSelected = 0;
   var _idPilihan = 0;
   var _harga = 0;
+  FocusNode _focusNode = FocusNode();
+  FocusNode _nameFocusNode = FocusNode();
+  FocusNode _numberFocusNode = FocusNode();
+
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _numberController = TextEditingController();
+
+  void dispose() {
+    _dateController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        _dateController.text = "${picked.toLocal()}".split(' ')[0];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +59,6 @@ class _Booking_tempatState extends State<Booking_tempat> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _textfieldBooking(context),
-              Text(
-                "Pilih Type Kendaraan",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              _pilihanTypeKendaraan(context),
-              SizedBox(
-                height: 10,
-              ),
               Text(
                 "Pilih Jenis Cuci",
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
@@ -73,7 +89,7 @@ class _Booking_tempatState extends State<Booking_tempat> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Booking_tempat()),
+              MaterialPageRoute(builder: (context) => Booking()),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -118,22 +134,39 @@ class _Booking_tempatState extends State<Booking_tempat> {
               SizedBox(
                 height: 55.0,
                 child: TextField(
+                  controller: _nameController,
+                  focusNode: _nameFocusNode,
                   decoration: InputDecoration(
-                      hintText: "Masukkan Nama Anda",
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 1.5,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 1.5,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(10.0))),
+                    hintText: "Masukkan Nama Anda",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _nameFocusNode.hasFocus
+                            ? Colors.green
+                            : Colors.green,
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -158,65 +191,46 @@ class _Booking_tempatState extends State<Booking_tempat> {
               SizedBox(
                 height: 55.0,
                 child: TextField(
+                  controller: _numberController,
+                  focusNode: _numberFocusNode,
                   decoration: InputDecoration(
-                      hintText: "Masukkan No. Telepon",
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 1.5,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 1.5,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(10.0))),
+                    hintText: "Masukkan No. Telepon",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _numberFocusNode.hasFocus
+                            ? Colors.green
+                            : Colors.green,
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                        width: 1.5,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
         SizedBox(
           height: 10,
         ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 4.0),
-                child: Text(
-                  "Tanggal Booking",
-                  style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(
-                height: 5.0,
-              ),
-              SizedBox(
-                height: 55.0,
-                child: TextField(
-                  decoration: InputDecoration(
-                      hintText: "Masukkan Tanggal Booking",
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 1.5,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(10.0)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.green,
-                              width: 1.5,
-                              style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(10.0))),
-                ),
-              )
-            ],
-          ),
-        ),
+        _pilihTanggal(context),
         SizedBox(
           height: 20,
         ),
@@ -224,26 +238,58 @@ class _Booking_tempatState extends State<Booking_tempat> {
     );
   }
 
-  Widget _pilihanTypeKendaraan(BuildContext context) {
-    var listChoice = ListItem.listChoice;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 8.0,
-          children: listChoice
-              .map((e) => ChoiceChip(
-                    label: Text(e.label),
-                    selected: _idSelected == e.id,
-                    selectedColor: Colors.green,
-                    side: BorderSide(color: Colors.green, width: 1.5),
-                    onSelected: (bool selected) => setState(() {
-                      _idSelected = selected ? e.id : 0;
-                    }),
-                  ))
-              .toList(),
-        ),
-      ],
+  Widget _pilihTanggal(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Text(
+              "Tanggal Booking",
+              style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          SizedBox(
+            height: 55.0,
+            width: 180,
+            child: TextField(
+              controller: _dateController,
+              focusNode: _focusNode,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.date_range),
+                prefixIconColor: Colors.green,
+                hintText: "Pilih Tanggal",
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.green,
+                    width: 1.5,
+                    style: BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.green,
+                    width: 1.5,
+                    style: BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              readOnly: true,
+              onTap: () async {
+                await _selectDate(context);
+                _focusNode.unfocus();
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
