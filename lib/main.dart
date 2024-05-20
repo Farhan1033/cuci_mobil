@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
-import 'menu/home.dart';
-import 'menu/profile.dart';
-import 'menu/booking.dart';
+import 'screen/home.dart';
+import 'screen/profile.dart';
+import 'screen/booking.dart';
 
 
 void main(List<String> args) {

@@ -1,4 +1,4 @@
-import 'package:cuci_mobil/menu/booking.dart';
+import 'package:cuci_mobil/screen/menu/booking_tempat.dart';
 import 'package:flutter/material.dart';
 
 class ButtonPosition extends StatelessWidget {
@@ -17,7 +17,7 @@ class ButtonPosition extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Booking()),
+              MaterialPageRoute(builder: (context) => Booking_tempat()),
             );
           },
           style: ElevatedButton.styleFrom(
