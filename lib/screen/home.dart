@@ -234,8 +234,9 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Container(
-                    decoration:
-                        BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(15)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 18.0),
