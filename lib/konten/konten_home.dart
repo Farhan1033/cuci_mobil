@@ -2,9 +2,7 @@ import 'package:cuci_mobil/konten/button_position.dart';
 import 'package:cuci_mobil/model/model.dart';
 import 'package:cuci_mobil/model/model_user.dart';
 import 'package:expandable_text/expandable_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class Konten extends StatefulWidget {
