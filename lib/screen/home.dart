@@ -1,9 +1,59 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:cuci_mobil/konten/konten_home.dart'; // Import file konten.dart
+import 'package:cuci_mobil/konten/konten_home.dart';
 import 'package:cuci_mobil/model/model.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  double currentPageValue = 0;
+  PageController controller = PageController(initialPage: 0);
+  Timer? _timer;
+  bool _isFading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      setState(() {
+        currentPageValue = controller.page!;
+      });
+    });
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) async {
+      if (controller.page!.round() == CarWash_List.length - 1) {
+        setState(() {
+          _isFading = true;
+        });
+        await Future.delayed(Duration(milliseconds: 500));
+        controller.jumpToPage(0);
+        setState(() {
+          _isFading = false;
+        });
+      } else {
+        controller.nextPage(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +77,7 @@ class Home extends StatelessWidget {
               style: TextStyle(fontSize: 20.0),
             ),
           ),
-          SizedBox(
-            child: Center(
-              child: Container(
-                height: 225,
-                width: 380,
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-            ),
-          ),
+          _gambarBergerak(context),
           SizedBox(
             height: 15,
           ),
@@ -86,8 +125,7 @@ class Home extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          Konten(carWash), // Mengirimkan objek CarWash
+                      builder: (context) => Konten(carWash),
                     ),
                   );
                 },
@@ -155,6 +193,78 @@ class Home extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _gambarBergerak(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: _isFading ? 0.0 : 1.0,
+      duration: Duration(milliseconds: 500),
+      child: Container(
+        height: 225,
+        width: MediaQuery.of(context).size.width,
+        child: PageView.builder(
+          controller: controller,
+          itemCount: CarWash_List.length,
+          itemBuilder: (context, index) {
+            double different = index - currentPageValue;
+            if (different < 0) {
+              different *= 1;
+            }
+            different = min(1, different);
+            final carWash = CarWash_List[index];
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Konten(carWash),
+                      ));
+                });
+              },
+              child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(carWash.imgUrl),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Container(
+                    decoration:
+                        BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 18.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            carWash.namaTempat,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 21.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            carWash.alamatTempat,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                wordSpacing: 0.5),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+            );
+          },
+        ),
       ),
     );
   }
