@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cuci_mobil/konten/konten_home.dart';
 import 'package:cuci_mobil/model/model.dart';
+import 'package:flutter/widgets.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -14,12 +16,20 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   double currentPageValue = 0;
   PageController controller = PageController(initialPage: 0);
+  TextEditingController cariController = TextEditingController();
   Timer? _timer;
   bool _isFading = false;
+  List<CarWash> list = [];
+  List<CarWash> listRating = [];
+  bool search = false;
+  Widget? searchNamaTempat = Text("Tempat Cuci Mobil");
+  double selectedRating = 0.0;
 
   @override
   void initState() {
     super.initState();
+    listRating.addAll(CarWash_List);
+    list.addAll(CarWash_List);
     controller.addListener(() {
       setState(() {
         currentPageValue = controller.page!;
@@ -89,6 +99,16 @@ class _HomeState extends State<Home> {
                   child: SizedBox(
                     height: 50,
                     child: TextField(
+                      onTap: () {
+                        setState(() {
+                          cariController.clear();
+                          _resetList();
+                        });
+                      },
+                      onChanged: (name) {
+                        _searchName(name);
+                      },
+                      controller: cariController,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.search),
                         hintText: "Cari Cuci Mobil",
@@ -108,7 +128,12 @@ class _HomeState extends State<Home> {
                     color: Color.fromRGBO(139, 219, 154, 1),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Icon(Icons.tune, color: Colors.white),
+                  child: IconButton(
+                    icon: Icon(Icons.tune, color: Colors.white),
+                    onPressed: () {
+                      _showFilterDialog();
+                    },
+                  ),
                 ),
               ],
             ),
@@ -117,9 +142,9 @@ class _HomeState extends State<Home> {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: CarWash_List.length,
+            itemCount: list.length,
             itemBuilder: (context, index) {
-              final carWash = CarWash_List[index];
+              final carWash = list[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -169,12 +194,12 @@ class _HomeState extends State<Home> {
                             carWash.namaTempat,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18.0,
                             ),
                           ),
                           Text(
                             carWash.alamatTempat,
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 12.0),
                           ),
                           Row(
                             children: [
@@ -248,7 +273,7 @@ class _HomeState extends State<Home> {
                             carWash.namaTempat,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 21.0,
+                              fontSize: 18.0,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -256,7 +281,7 @@ class _HomeState extends State<Home> {
                             carWash.alamatTempat,
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16.0,
+                                fontSize: 14.0,
                                 wordSpacing: 0.5),
                           ),
                         ],
@@ -268,5 +293,96 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text("Filter Berdasarkan Rating"),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Pilih rating:"),
+                  StatefulBuilder(builder: (context, State) {
+                    return Slider(
+                      value: selectedRating,
+                      min: 0.0,
+                      max: 5.0,
+                      divisions: 50,
+                      label: selectedRating.toStringAsFixed(1),
+                      onChanged: (double value) {
+                        State(() {
+                          selectedRating = value;
+                        });
+                      },
+                    );
+                  }),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _filterByRating();
+                  },
+                  child: Text("Terapkan"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _resetList();
+                  },
+                  child: Text("Tampilkan Semuanya"),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _filterByRating() {
+    setState(() {
+      list = CarWash_List.where((item) {
+        final rating = item.reviewTempat;
+        return rating == selectedRating;
+      }).toList();
+    });
+  }
+
+  void _searchName(String name) {
+    setState(() {
+      if (name.isEmpty) {
+        _resetList();
+      } else {
+        list = CarWash_List.where((item) =>
+                item.namaTempat.toLowerCase().contains(name.toLowerCase()))
+            .toList();
+      }
+    });
+    setState(() {
+      searchNamaTempat =
+          name.isEmpty ? Text("Tempat Cuci Mobil") : Text("Hasil Pencarian");
+    });
+  }
+
+  void _resetList() {
+    setState(() {
+      list.clear();
+      list.addAll(CarWash_List);
+      cariController.clear();
+    });
+    setState(() {
+      searchNamaTempat = Text("Tempat Cuci Mobil");
+    });
   }
 }

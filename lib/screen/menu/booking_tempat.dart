@@ -1,5 +1,6 @@
 import 'package:cuci_mobil/model/list_cucimobil.dart';
 import 'package:cuci_mobil/screen/booking.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -87,10 +88,7 @@ class _Booking_tempatState extends State<Booking_tempat> {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Booking()),
-            );
+            _showAlertPilihan(context);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
@@ -110,6 +108,87 @@ class _Booking_tempatState extends State<Booking_tempat> {
       ),
     );
   }
+
+  Widget _alertPilihan(BuildContext context) {
+    return AlertDialog(
+      title: Column(
+        children: [
+          Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 50,
+          ),
+          SizedBox(
+            width: 10,
+            height: 10,
+          ),
+          Text('Konfirmasi Pendaftaran'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            // Aksi jika setuju
+            Navigator.of(context).pop(true);
+          },
+          child: Text('Setuju'),
+        ),
+        TextButton(
+          onPressed: () {
+            // Aksi jika tidak setuju
+            Navigator.of(context).pop(false);
+          },
+          child: Text('Tidak Setuju'),
+        ),
+      ],
+    );
+  }
+
+  void _showAlertPilihan(BuildContext context) async {
+  if (_nameController.text.isEmpty ||
+      _numberController.text.isEmpty ||
+      _dateController.text.isEmpty ||
+      _idPilihan == 0) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Peringatan'),
+          content: Text('Harap isi semua field terlebih dahulu.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return _alertPilihan(context);
+      },
+    );
+    if (result == true) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Booking(
+            name: _nameController.text,
+            phoneNumber: _numberController.text,
+            bookingDate: _dateController.text,
+            jenisCuciId: _idPilihan,
+            harga: _harga,
+          ),
+        ),
+      );
+    }
+  }
+}
 
   Widget _textfieldBooking(BuildContext context) {
     return Column(

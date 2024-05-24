@@ -20,7 +20,7 @@ List<UserModel> UserModel_List = [
       imgProfile:
           "https://img.freepik.com/free-photo/portrait-joyful-young-man-white-shirt_171337-17467.jpg?t=st=1716106767~exp=1716110367~hmac=5bc66f6f058ef73fa757cd5729987515736a1dcfd12c740fd6a728c4262af57c&w=1060"),
   UserModel(
-      namaUser: "Brian",
+      namaUser: "Brian Heard",
       ratingUser: 5.0,
       komenUser: "Terbaik sekali pelayanannya",
       imgProfile:

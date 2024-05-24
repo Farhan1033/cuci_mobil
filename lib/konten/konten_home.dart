@@ -21,6 +21,12 @@ class _KontenState extends State<Konten> {
     BuildContext context,
   ) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          toolbarHeight: 0,
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -47,7 +53,7 @@ class _KontenState extends State<Konten> {
             image: DecorationImage(
                 image: NetworkImage(carWash.imgUrl), fit: BoxFit.cover)),
         child: Padding(
-          padding: EdgeInsets.only(top: 20.0, left: 16.0),
+          padding: EdgeInsets.only(top: 15, left: 16.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,14 +64,15 @@ class _KontenState extends State<Konten> {
                   });
                 },
                 child: Container(
-                  height: 50,
-                  width: 50,
+                  height: 35,
+                  width: 35,
                   decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.45),
                       borderRadius: BorderRadius.circular(25)),
                   child: Icon(
                     Icons.arrow_back_rounded,
                     color: Colors.white,
+                    size: 20,
                   ),
                 ),
               ),
@@ -80,8 +87,8 @@ class _KontenState extends State<Konten> {
                 },
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 300),
-                  height: 50,
-                  width: 50,
+                  height: 35,
+                  width: 35,
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(25),
@@ -94,9 +101,11 @@ class _KontenState extends State<Konten> {
                               Icons.favorite,
                               color: Colors.red,
                               key: ValueKey('red'),
+                              size: 20,
                             )
                           : Icon(
                               Icons.favorite,
+                              size: 20,
                               color: Colors.white,
                               key: ValueKey('white'),
                             ),
@@ -112,14 +121,15 @@ class _KontenState extends State<Konten> {
                   setState(() {});
                 },
                 child: Container(
-                  height: 50,
-                  width: 50,
+                  height: 35,
+                  width: 35,
                   decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(25)),
                   child: Icon(
                     Icons.share,
                     color: Colors.white,
+                    size: 20,
                   ),
                 ),
               )
@@ -199,7 +209,7 @@ class _KontenState extends State<Konten> {
                 child: Center(
                     child: Text(
                   "Car Washing",
-                  style: TextStyle(color: Colors.white, fontSize: 16.0),
+                  style: TextStyle(color: Colors.white, fontSize: 14.0),
                 )),
               ),
             ),
@@ -236,11 +246,11 @@ class _KontenState extends State<Konten> {
             children: [
               Text(
                 carWash.namaTempat,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               Text(
                 carWash.alamatTempat,
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(fontSize: 14.0),
               )
             ],
           ),
@@ -255,7 +265,7 @@ class _KontenState extends State<Konten> {
             children: [
               Text(
                 "Deskripsi",
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
               ),
               SizedBox(
                 height: 10,
@@ -267,7 +277,7 @@ class _KontenState extends State<Konten> {
                 maxLines: 5,
                 linkColor: Colors.green,
                 textAlign: TextAlign.justify,
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(fontSize: 14.0),
               ),
             ],
           ),
@@ -277,7 +287,7 @@ class _KontenState extends State<Konten> {
         ),
         Text(
           "Kontak",
-          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
         ),
         _infoKontak(context, widget.carWash),
         SizedBox(
@@ -303,7 +313,7 @@ class _KontenState extends State<Konten> {
                     Text(
                       "Penilian Tempat",
                       style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.w500),
+                          fontSize: 14.0, fontWeight: FontWeight.w500),
                     ),
                     _nilaiReview(context, carWash)
                   ],
@@ -320,7 +330,7 @@ class _KontenState extends State<Konten> {
                   child: Center(
                     child: Text(
                       "Lihat Semua >",
-                      style: TextStyle(color: Colors.green, fontSize: 16.0),
+                      style: TextStyle(color: Colors.green, fontSize: 14.0),
                     ),
                   ),
                 ),

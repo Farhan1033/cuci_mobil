@@ -3,7 +3,6 @@ import 'screen/home.dart';
 import 'screen/profile.dart';
 import 'screen/booking.dart';
 
-
 void main(List<String> args) {
   runApp(const MyApp());
 }
@@ -29,7 +28,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  List menu = [Home(), Booking(), Profile()];
+  List menu = [
+    Home(),
+    Booking(
+      name: "",
+      phoneNumber: "",
+      bookingDate: "",
+      harga: 0,
+      jenisCuciId: 0,
+    ),
+    Profile()
+  ];
 
   @override
   Widget build(BuildContext context) {
