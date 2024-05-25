@@ -15,9 +15,11 @@ class _ProfileState extends State<Profile> {
     UserModel userModel = UserModel_List[1];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile"),
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          toolbarHeight: 0,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

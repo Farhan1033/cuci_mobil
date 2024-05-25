@@ -36,7 +36,9 @@ class _HomeState extends State<Home> {
         currentPageValue = controller.page!;
       });
     });
-    _startAutoScroll();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAutoScroll();
+    });
   }
 
   void _startAutoScroll() {

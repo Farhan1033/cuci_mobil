@@ -12,8 +12,11 @@ class Booking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Detail Booking'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          toolbarHeight: 0,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
