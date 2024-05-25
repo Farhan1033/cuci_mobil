@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cuci_mobil/konten/konten_home.dart';
+import 'package:cuci_mobil/screen/konten/konten_home.dart';
 import 'package:cuci_mobil/model/model.dart';
 import 'package:flutter/widgets.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
   @override
   State<Home> createState() => _HomeState();
 }
@@ -27,6 +27,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    getData();
     super.initState();
     listRating.addAll(CarWash_List);
     list.addAll(CarWash_List);
@@ -58,6 +59,17 @@ class _HomeState extends State<Home> {
     });
   }
 
+  late String userId;
+  bool loading = true;
+  void getData() async {
+    loading = true;
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      userId = currentUser.uid;
+    }
+    loading = false;
+  }
+
   @override
   void dispose() {
     controller.dispose();
@@ -78,13 +90,23 @@ class _HomeState extends State<Home> {
         padding: EdgeInsets.all(8.0),
         children: [
           ListTile(
-            title: Text(
-              "Halo, ",
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
+            title: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(userId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    return Text(" ");
+                  }
+                  return Text(
+                    "Halo, " + snapshot.data?.get("nama_user"),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  );
+                }),
             subtitle: Text(
               "Ayo Bersihkan Mobilmu hari ini!",
-              style: TextStyle(fontSize: 20.0),
+              style: TextStyle(fontSize: 16.0),
             ),
           ),
           _gambarBergerak(context),

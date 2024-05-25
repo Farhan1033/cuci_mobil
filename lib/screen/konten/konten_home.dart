@@ -1,8 +1,11 @@
-import 'package:cuci_mobil/konten/button_position.dart';
+import 'package:cuci_mobil/screen/konten/button_position.dart';
 import 'package:cuci_mobil/model/model.dart';
 import 'package:cuci_mobil/model/model_user.dart';
+import 'package:cuci_mobil/screen/menu/review_tampat.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class Konten extends StatefulWidget {
@@ -49,92 +52,104 @@ class _KontenState extends State<Konten> {
       width: MediaQuery.of(context).size.width,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.blue,
-            image: DecorationImage(
-                image: NetworkImage(carWash.imgUrl), fit: BoxFit.cover)),
-        child: Padding(
-          padding: EdgeInsets.only(top: 15, left: 16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
+          color: Colors.blue,
+          image: DecorationImage(
+            image: NetworkImage(widget.carWash.imgUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 15, left: 16.0),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
-                  });
-                },
-                child: Container(
-                  height: 35,
-                  width: 35,
-                  decoration: BoxDecoration(
+                  },
+                  child: Container(
+                    height: 35,
+                    width: 35,
+                    decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.45),
-                      borderRadius: BorderRadius.circular(25)),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 220,
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isFavorited = !isFavorited; // Toggle the favorite state
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  height: 35,
-                  width: 35,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Center(
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 300),
-                      child: isFavorited
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                              key: ValueKey('red'),
-                              size: 20,
-                            )
-                          : Icon(
-                              Icons.favorite,
-                              size: 20,
-                              color: Colors.white,
-                              key: ValueKey('white'),
-                            ),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_rounded,
+                      color: Colors.white,
+                      size: 20,
                     ),
                   ),
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {});
-                },
-                child: Container(
-                  height: 35,
-                  width: 35,
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(25)),
-                  child: Icon(
-                    Icons.share,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 15, right: 16.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isFavorited =
+                              !isFavorited; // Toggle the favorite state
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Center(
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 300),
+                            child: isFavorited
+                                ? Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                    key: ValueKey('red'),
+                                    size: 20,
+                                  )
+                                : Icon(
+                                    Icons.favorite,
+                                    size: 20,
+                                    color: Colors.white,
+                                    key: ValueKey('white'),
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        // Add share functionality here
+                      },
+                      child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Icon(
+                          Icons.share,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -196,41 +211,46 @@ class _KontenState extends State<Konten> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Stack(
           children: [
-            SizedBox(
-              height: 40,
-              width: 120,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(20)),
-                child: Center(
-                    child: Text(
-                  "Car Washing",
-                  style: TextStyle(color: Colors.white, fontSize: 14.0),
-                )),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                height: 40,
+                width: 120,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Center(
+                      child: Text(
+                    "Car Washing",
+                    style: TextStyle(color: Colors.white, fontSize: 14.0),
+                  )),
+                ),
               ),
             ),
-            SizedBox(
-              height: 40,
-              width: 170,
-              child: Container(
-                child: Center(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Text(
-                        carWash.reviewTempat.toString() +
-                            " " +
-                            carWash.ratingTempat,
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                height: 40,
+                width: 170,
+                child: Container(
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: Colors.yellow,
+                        ),
+                        Text(
+                          carWash.reviewTempat.toString() +
+                              " " +
+                              carWash.ratingTempat,
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -322,7 +342,11 @@ class _KontenState extends State<Konten> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    //Navigasi ke review tempat full
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReviewTempatFull(),
+                        ));
                   });
                 },
                 child: Container(
