@@ -28,7 +28,7 @@ class AuthService {
       User? firebaseUser = result.user;
       return firebaseUser;
     } catch (e) {
-      print('Error saat mendaftar: $e');
+      print('Error saat masuk: $e');
       return null;
     }
   }
@@ -46,7 +46,6 @@ class AuthService {
         'nama_user': nama,
         'nomor_telfon': nomor,
         'email': email,
-        'password': password
       });
 
       return firebaseUser;

@@ -1,3 +1,4 @@
+import 'package:cuci_mobil/login%20dan%20register/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -24,7 +25,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ));
                       });
                     },
                     child: Text("Oke, Saya Mengerti"))

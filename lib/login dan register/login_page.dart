@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:cuci_mobil/login%20dan%20register/lupa_password.dart';
 import 'package:cuci_mobil/screen/main_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'register_page.dart';
+import 'package:cuci_mobil/controller/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -18,42 +18,11 @@ class _LoginPageState extends State<LoginPage> {
   String error = '';
   final _formkey1 = GlobalKey<FormState>();
 
-  bool _isValidEmail(String email) {
-    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    return emailRegex.hasMatch(email);
-  }
-
-  Future<void> login() async {
-    if (_formkey1.currentState!.validate()) {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text);
-        var user = userCredential.user;
-
-        if (user != null) {
-          DocumentSnapshot snapshot = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-          if (snapshot.exists) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MainPage(user),
-                ));
-          }
-        }
-      } catch (e) {
-        print(e.toString());
-
-        final snackBar = SnackBar(
-          content: Text("Email atau paswword salah"),
-          duration: Duration(seconds: 3),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      }
-    }
+  bool _isValidEmail(String value) {
+    final emailRegex = RegExp(
+      r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$',
+    );
+    return emailRegex.hasMatch(value);
   }
 
   @override
@@ -122,14 +91,6 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(
           height: 55,
           child: TextFormField(
-            validator: (val) {
-              if (val == null || val.isEmpty) {
-                return "Email anda kosong";
-              } else if (!_isValidEmail(val)) {
-                return "Email tidak valid";
-              }
-              return null;
-            },
             controller: emailController,
             decoration: InputDecoration(
               labelText: "Email",
@@ -142,10 +103,13 @@ class _LoginPageState extends State<LoginPage> {
                 borderSide: BorderSide(color: Colors.green, width: 1.5),
               ),
             ),
-            onChanged: (val) {
-              setState(() {
-                emailController.text = val;
-              });
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Email anda kosong";
+              } else if (!_isValidEmail(value)) {
+                return "Email tidak valid";
+              }
+              return null;
             },
           ),
         ),
@@ -153,12 +117,6 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(
           height: 55,
           child: TextFormField(
-            validator: (val) {
-              if (val == null || val.isEmpty) {
-                return 'Jangan kosongi Password anda';
-              }
-              return null;
-            },
             controller: passwordController,
             decoration: InputDecoration(
               labelText: 'Password',
@@ -186,6 +144,12 @@ class _LoginPageState extends State<LoginPage> {
               setState(() {
                 passwordController.text = val;
               });
+            },
+            validator: (val) {
+              if (val == null || val.isEmpty) {
+                return 'Jangan kosongi Password anda';
+              }
+              return null;
             },
           ),
         ),
@@ -224,56 +188,31 @@ class _LoginPageState extends State<LoginPage> {
         ),
         onPressed: () async {
           try {
-            if (emailController.text.isEmpty ||
-                passwordController.text.isEmpty) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    icon: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            color: Colors.red, shape: BoxShape.circle),
-                        child: Icon(
-                          Icons.close_rounded,
-                          size: 25,
-                        )),
-                    iconColor: Colors.white,
-                    title: Text(
-                      "Email atau Password Tidak Boleh Kosong",
-                      style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
-                    ),
-                    actions: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.green)),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Center(
-                              child: Text(
-                            "Oke",
-                            style: TextStyle(color: Colors.white),
-                          )))
-                    ],
-                  );
-                },
+            var user = await AuthService.signIn(
+                emailController.text, passwordController.text);
+
+            if (user != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainPage(user),
+                ),
               );
             } else {
-              await AuthService.signIn(
-                  emailController.text, passwordController.text);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Email atau kata sandi salah.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
             }
           } catch (e) {
-            final snackBar = SnackBar(
-              content: Text("Email atau Password salah"),
-              duration: Duration(seconds: 3),
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Terjadi kesalahan. Silakan coba lagi.'),
+                backgroundColor: Colors.red,
+              ),
             );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            print(e.toString());
-            return null;
           }
         },
         child: Text(
