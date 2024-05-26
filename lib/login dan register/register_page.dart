@@ -1,6 +1,7 @@
 import 'package:cuci_mobil/login%20dan%20register/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:cuci_mobil/controller/auth_services.dart'; // Import AuthService
+import 'package:cuci_mobil/controller/auth_services.dart';
+import 'package:flutter/services.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -16,8 +17,26 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _obsecureText = true;
   String error = '';
+
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    return emailRegex.hasMatch(email);
+  }
+
+  void _register() {
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registrasi berhasil!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email tidak valid')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,118 +50,172 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              SizedBox(
-                width: 230,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 96.5,
-                      width: 174.5,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        image: DecorationImage(
-                          image: AssetImage(
-                              "assets/images/wepik-duotone-modern-car-wash-company-logo-20231219095102CRXZ 1.png"),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 230,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 96.5,
+                        width: 174.5,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              "assets/images/wepik-duotone-modern-car-wash-company-logo-20231219095102CRXZ 1.png",
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16.0),
-                    Text(
-                      "Anda Belum Terdaftar",
+                      SizedBox(height: 16.0),
+                      Text(
+                        "Anda Belum Terdaftar",
+                        style: TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Isi informasi dibawah ini",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildTextField(
+                    judul: "Nama Lengkap",
+                    controller: nameController,
+                    iconData: Icon(Icons.person),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nama tidak boleh kosong';
+                      }
+                      return null;
+                    }),
+                SizedBox(height: 16),
+                _buildTextField(
+                    judul: "Nomor Handphone",
+                    controller: phoneController,
+                    iconData: Icon(Icons.phone),
+                    number: 13,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nomor handphone tidak boleh kosong';
+                      }
+                      return null;
+                    }),
+                SizedBox(height: 16),
+                _buildTextField(
+                    judul: "Email",
+                    controller: emailController,
+                    iconData: Icon(Icons.email),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email tidak boleh kosong';
+                      } else if (!_isValidEmail(value)) {
+                        return 'Format email tidak valid';
+                      }
+                      return null;
+                    }),
+                SizedBox(height: 16),
+                _buildPassText(
+                  label: "Password",
+                  controller: passwordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Password tidak boleh kosong';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                _buildPassText(
+                  label: "Konfirmasi Password",
+                  controller: confirmPasswordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Password tidak boleh kosong';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                SizedBox(
+                  width: 232,
+                  height: 46,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.green)),
+                    onPressed: () async {
+                      try {
+                        if (_formKey.currentState!.validate()) {
+                          await AuthService.signUp(
+                              nameController.text,
+                              phoneController.text,
+                              emailController.text,
+                              confirmPasswordController.text);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        } else {
+                          final snackBar = SnackBar(
+                            content: Text('Email tidak valid'),
+                            backgroundColor: Colors.red,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      } catch (e) {
+                        print('Error saat mendaftar: $e');
+                        final snackBar = SnackBar(
+                          content: Text("Gagal Mendaftarkan Akun"),
+                          duration: Duration(seconds: 3),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    },
+                    child: Text(
+                      'DAFTAR',
                       style: TextStyle(
-                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold),
                     ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Text(
-                      "Isi informasi dibawah ini",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12.0),
+                      'Sudah punya akun?',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text(
+                        'Masuk',
+                        style: TextStyle(fontSize: 14.0, color: Colors.blue),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 16),
-              _buildTextField(
-                  judul: "Nama Lengkap",
-                  controller: nameController,
-                  iconData: Icon(Icons.person)),
-              SizedBox(height: 16),
-              _buildTextField(
-                  judul: "Nomor Handphone",
-                  controller: phoneController,
-                  iconData: Icon(Icons.phone)),
-              SizedBox(height: 16),
-              _buildTextField(
-                  judul: "Email",
-                  controller: emailController,
-                  iconData: Icon(Icons.email)),
-              SizedBox(height: 16),
-              _buildPassText(label: "Password", controller: passwordController),
-              SizedBox(height: 16),
-              _buildPassText(
-                  label: "Konfirmasi Password",
-                  controller: confirmPasswordController),
-              SizedBox(height: 16),
-              SizedBox(
-                width: 232,
-                height: 46,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(Colors.green)),
-                  onPressed: () async {
-                    try {
-                      await AuthService.signUp(
-                          nameController.text,
-                          phoneController.text,
-                          emailController.text,
-                          confirmPasswordController.text);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
-                        ),
-                      );
-                    } catch (e) {
-                      print('Error saat mendaftar: $e');
-                    }
-                  },
-                  child: Text(
-                    'DAFTAR',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Sudah punya akun?',
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: Text(
-                      'Masuk',
-                      style: TextStyle(fontSize: 14.0, color: Colors.blue),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -152,11 +225,21 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildTextField(
       {required String judul,
       required TextEditingController controller,
-      required Icon iconData}) {
+      required Icon iconData,
+      int? number,
+      String? Function(String?)? validator}) {
     return SizedBox(
       height: 55,
-      child: TextField(
+      child: TextFormField(
         controller: controller,
+        keyboardType:
+            number != null ? TextInputType.number : TextInputType.text,
+        inputFormatters: number != null
+            ? [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(number),
+              ]
+            : [],
         decoration: InputDecoration(
           labelText: judul,
           labelStyle: TextStyle(color: Colors.black),
@@ -165,19 +248,25 @@ class _RegisterPageState extends State<RegisterPage> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.green, width: 1.5)),
         ),
+        validator: validator,
       ),
     );
   }
 
   Widget _buildPassText(
-      {required String label, required TextEditingController controller}) {
+      {required String label,
+      required TextEditingController controller,
+      String? Function(String?)? validator}) {
     return SizedBox(
       height: 55,
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
@@ -197,11 +286,15 @@ class _RegisterPageState extends State<RegisterPage> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.green, width: 1.5)),
         ),
         obscureText: _obsecureText,
+        validator: validator,
       ),
     );
   }
