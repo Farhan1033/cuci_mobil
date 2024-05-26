@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:cuci_mobil/login%20dan%20register/lupa_password.dart';
 import 'package:cuci_mobil/screen/main_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -262,7 +263,8 @@ class _LoginPageState extends State<LoginPage> {
                 },
               );
             } else {
-              await login();
+              await AuthService.signIn(
+                  emailController.text, passwordController.text);
             }
           } catch (e) {
             final snackBar = SnackBar(
