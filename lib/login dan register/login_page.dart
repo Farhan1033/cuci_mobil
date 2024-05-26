@@ -4,7 +4,6 @@ import 'package:cuci_mobil/screen/main_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'register_page.dart';
-import 'package:cuci_mobil/controller/auth_services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
