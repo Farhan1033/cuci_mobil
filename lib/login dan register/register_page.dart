@@ -1,7 +1,9 @@
 import 'package:cuci_mobil/login%20dan%20register/login_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -49,40 +51,12 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 16.0),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(
-                  width: 230,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 96.5,
-                        width: 174.5,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                              "assets/images/wepik-duotone-modern-car-wash-company-logo-20231219095102CRXZ 1.png",
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
-                      Text(
-                        "Anda Belum Terdaftar",
-                        style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Isi informasi dibawah ini",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                    ],
-                  ),
-                ),
+                _header(context),
                 SizedBox(height: 16),
                 _buildTextField(
                     judul: "Nama Lengkap",
@@ -142,82 +116,44 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                 ),
                 SizedBox(height: 16),
-                SizedBox(
-                  width: 232,
-                  height: 46,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.green)),
-                    onPressed: () async {
-                      try {
-                        if (_formKey.currentState!.validate()) {
-                          await AuthService.signUp(
-                              nameController.text,
-                              phoneController.text,
-                              emailController.text,
-                              confirmPasswordController.text);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        } else {
-                          final snackBar = SnackBar(
-                            content: Text('Email tidak valid'),
-                            backgroundColor: Colors.red,
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                      } catch (e) {
-                        print('Error saat mendaftar: $e');
-                        final snackBar = SnackBar(
-                          content: Text("Gagal Mendaftarkan Akun"),
-                          duration: Duration(seconds: 3),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                    },
-                    child: Text(
-                      'DAFTAR',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
+                _buttonDaftar(context),
                 SizedBox(height: 16),
-                Text(
-                  error,
-                  style: TextStyle(color: Colors.red, fontSize: 14.0),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Sudah punya akun?',
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: Text(
-                        'Masuk',
-                        style: TextStyle(fontSize: 14.0, color: Colors.blue),
-                      ),
-                    ),
-                  ],
-                ),
+                _footer(context)
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _header(BuildContext context) {
+    return SizedBox(
+      width: 230,
+      child: Column(
+        children: [
+          Container(
+            height: 96.5,
+            width: 174.5,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/images/wepik-duotone-modern-car-wash-company-logo-20231219095102CRXZ 1.png",
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            "Anda Belum Terdaftar",
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            "Isi informasi dibawah ini",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12.0),
+          ),
+        ],
       ),
     );
   }
@@ -296,6 +232,76 @@ class _RegisterPageState extends State<RegisterPage> {
         obscureText: _obsecureText,
         validator: validator,
       ),
+    );
+  }
+
+  Widget _buttonDaftar(BuildContext context) {
+    return SizedBox(
+      width: 232,
+      height: 46,
+      child: ElevatedButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.green)),
+        onPressed: () async {
+          try {
+            if (_formKey.currentState!.validate()) {
+              await AuthService.signUp(
+                  nameController.text,
+                  phoneController.text,
+                  emailController.text,
+                  confirmPasswordController.text);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                ),
+              );
+            } else {
+              final snackBar = SnackBar(
+                content: Text('Email tidak valid'),
+                backgroundColor: Colors.red,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+          } catch (e) {
+            print('Error saat mendaftar: $e');
+            final snackBar = SnackBar(
+              content: Text("Gagal Mendaftarkan Akun"),
+              duration: Duration(seconds: 3),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        },
+        child: Text(
+          'DAFTAR',
+          style: TextStyle(
+              color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _footer(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Sudah punya akun?',
+          style: TextStyle(fontSize: 14.0),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+          },
+          child: Text(
+            'Masuk',
+            style: TextStyle(fontSize: 14.0, color: Colors.green),
+          ),
+        ),
+      ],
     );
   }
 }

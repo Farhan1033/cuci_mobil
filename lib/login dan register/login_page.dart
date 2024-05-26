@@ -84,6 +84,8 @@ class _LoginPageState extends State<LoginPage> {
             decoration: InputDecoration(
               labelText: "Email",
               labelStyle: TextStyle(color: Colors.black),
+              prefixIcon: Icon(Icons.email),
+              prefixIconColor: Colors.green,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -102,6 +104,8 @@ class _LoginPageState extends State<LoginPage> {
             decoration: InputDecoration(
               labelText: 'Password',
               labelStyle: TextStyle(color: Colors.black),
+              prefixIcon: Icon(Icons.key_rounded),
+              prefixIconColor: Colors.green,
               suffixIcon: IconButton(
                 icon: Icon(
                   _obsecureText ? Icons.visibility : Icons.visibility_off,
@@ -168,10 +172,18 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context) => MainPage(user),
                 ),
               );
+            } else if (emailController.text.isEmpty ||
+                passwordController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Email atau kata sandi tidak boleh kosong.'),
+                duration: Duration(seconds: 3),
+                backgroundColor: Colors.red,
+              ));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Email atau kata sandi salah.'),
+                  duration: Duration(seconds: 3),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -211,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
           },
           child: Text(
             'Register',
-            style: TextStyle(fontSize: 14.0, color: Colors.blue),
+            style: TextStyle(fontSize: 14.0, color: Colors.green),
           ),
         ),
       ],
