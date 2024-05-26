@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cuci_mobil/login%20dan%20register/lupa_password.dart';
 import 'package:cuci_mobil/screen/main_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'register_page.dart';
 import 'package:cuci_mobil/controller/auth_services.dart';
@@ -15,15 +13,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _obsecureText = true;
-  String error = '';
-  final _formkey1 = GlobalKey<FormState>();
-
-  bool _isValidEmail(String value) {
-    final emailRegex = RegExp(
-      r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$',
-    );
-    return emailRegex.hasMatch(value);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,14 +92,6 @@ class _LoginPageState extends State<LoginPage> {
                 borderSide: BorderSide(color: Colors.green, width: 1.5),
               ),
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Email anda kosong";
-              } else if (!_isValidEmail(value)) {
-                return "Email tidak valid";
-              }
-              return null;
-            },
           ),
         ),
         SizedBox(height: 16),
@@ -140,17 +121,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             obscureText: _obsecureText,
-            onChanged: (val) {
-              setState(() {
-                passwordController.text = val;
-              });
-            },
-            validator: (val) {
-              if (val == null || val.isEmpty) {
-                return 'Jangan kosongi Password anda';
-              }
-              return null;
-            },
           ),
         ),
       ],
