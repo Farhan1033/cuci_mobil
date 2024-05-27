@@ -18,6 +18,33 @@ class AuthService {
     }
   }
 
+  static Future<void> saveBookingToFirebase(String name, String phoneNumber,
+      String bookingDate, int jenisCuciId, double harga, int counter) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      try {
+        await _firestore
+            .collection("booking")
+            .doc(currentUser.uid)
+            .collection("bookings")
+            .add({
+          'name': name,
+          'phoneNumber': phoneNumber,
+          'bookingDate': bookingDate,
+          'jenisCuciId': jenisCuciId,
+          'harga': harga,
+          'timestamp': FieldValue.serverTimestamp(),
+          'antrian': counter
+        });
+        print("Booking added successfully!");
+      } catch (e) {
+        print("Failed to add booking: $e");
+      }
+    } else {
+      print("No user is currently signed in.");
+    }
+  }
+
   static Future<User?> signIn(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(

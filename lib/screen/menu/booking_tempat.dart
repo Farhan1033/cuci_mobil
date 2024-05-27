@@ -1,3 +1,4 @@
+import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:cuci_mobil/model/list_cucimobil.dart';
 import 'package:cuci_mobil/screen/booking.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ class Booking_tempat extends StatefulWidget {
 class _Booking_tempatState extends State<Booking_tempat> {
   var _idPilihan = 0;
   var _harga = 0;
+  var _counter = 0;
   FocusNode _focusNode = FocusNode();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _numberFocusNode = FocusNode();
@@ -145,50 +147,56 @@ class _Booking_tempatState extends State<Booking_tempat> {
   }
 
   void _showAlertPilihan(BuildContext context) async {
-  if (_nameController.text.isEmpty ||
-      _numberController.text.isEmpty ||
-      _dateController.text.isEmpty ||
-      _idPilihan == 0) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Peringatan'),
-          content: Text('Harap isi semua field terlebih dahulu.'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  } else {
-    final result = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return _alertPilihan(context);
-      },
-    );
-    if (result == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Booking(
-            name: _nameController.text,
-            phoneNumber: _numberController.text,
-            bookingDate: _dateController.text,
-            jenisCuciId: _idPilihan,
-            harga: _harga,
-          ),
-        ),
+    if (_nameController.text.isEmpty ||
+        _numberController.text.isEmpty ||
+        _dateController.text.isEmpty ||
+        _idPilihan == 0) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Peringatan'),
+            content: Text('Harap isi semua field terlebih dahulu.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
       );
+    } else {
+      final result = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return _alertPilihan(context);
+        },
+      );
+      if (result == true) {
+        setState(() {
+          _counter++;
+        });
+        try {
+          await AuthService.saveBookingToFirebase(
+              _nameController.text,
+              _numberController.text,
+              _dateController.text,
+              _idPilihan,
+              _harga.toDouble(),
+              _counter
+              );
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Booking()));
+        } catch (e) {
+          print(e.toString());
+        }
+      }
     }
   }
-}
 
   Widget _textfieldBooking(BuildContext context) {
     return Column(
