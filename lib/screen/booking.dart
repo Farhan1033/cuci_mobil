@@ -1,40 +1,37 @@
 import "package:flutter/material.dart";
 
 class Booking extends StatelessWidget {
-  // final String name;
-  // final String phoneNumber;
-  // final String bookingDate;
-  // final int jenisCuciId;
-  // final int harga;
-
-  // Booking({required this.name, required this.phoneNumber, required this.bookingDate, required this.jenisCuciId, required this.harga});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
-        child: AppBar(
-          toolbarHeight: 0,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: AppBar(
+            toolbarHeight: 0,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Text('Nama: $name', style: TextStyle(fontSize: 18)),
-            // SizedBox(height: 8),
-            // Text('No. Telepon: $phoneNumber', style: TextStyle(fontSize: 18)),
-            // SizedBox(height: 8),
-            // Text('Tanggal Booking: $bookingDate', style: TextStyle(fontSize: 18)),
-            // SizedBox(height: 8),
-            // Text('Jenis Cuci: $jenisCuciId', style: TextStyle(fontSize: 18)),
-            // SizedBox(height: 8),
-            // Text('Harga: $harga', style: TextStyle(fontSize: 18)),
-          ],
-        ),
-      ),
+        body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Stack(
+              children: [_cardBooking(context)],
+            )));
+  }
+
+  Widget _cardBooking(BuildContext context) {
+    return ListView.builder(
+      itemCount: 2,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 2),
+            height: 130,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: Colors.blue[200],
+                borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:path/path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AuthService {
   static FirebaseAuth _auth = FirebaseAuth.instance;
@@ -89,6 +92,14 @@ class AuthService {
     } catch (e) {
       print('Error signing out: $e');
     }
+  }
+
+  static Future<String> uploadGambar(File imageFile) async {
+    String fileName = basename(imageFile.path);
+    Reference ref = FirebaseStorage.instance.ref().child(fileName);
+    UploadTask task = ref.putFile(imageFile);
+    TaskSnapshot snapshot = await task;
+    return await snapshot.ref.getDownloadURL();
   }
 
   static Stream<User?> get firebaseUserStream => _auth.authStateChanges();

@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16.0),
           child: Column(
             children: [
               _header(context),
