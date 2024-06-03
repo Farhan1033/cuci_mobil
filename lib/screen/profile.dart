@@ -18,6 +18,15 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   String? gambarPATH1;
   User? currentUser = FirebaseAuth.instance.currentUser;
+  late String userId;
+  bool loading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class _ProfileState extends State<Profile> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _gambarProfile(userModel),
-              SizedBox(height: 32),
+              SizedBox(height: 15),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -76,6 +85,14 @@ class _ProfileState extends State<Profile> {
                     ),
                     Divider(),
                     _buildMenuOption(
+                      icon: Icons.info,
+                      title: "About",
+                      onTap: () {
+                        // Implementasi untuk melihat tentang aplikasi
+                      },
+                    ),
+                    Divider(),
+                    _buildMenuOption(
                       icon: Icons.logout,
                       title: "Logout",
                       onTap: () async {
@@ -90,14 +107,6 @@ class _ProfileState extends State<Profile> {
                         } catch (e) {
                           print(e.toString());
                         }
-                      },
-                    ),
-                    Divider(),
-                    _buildMenuOption(
-                      icon: Icons.info,
-                      title: "About",
-                      onTap: () {
-                        // Implementasi untuk melihat tentang aplikasi
                       },
                     ),
                   ],
@@ -166,21 +175,38 @@ class _ProfileState extends State<Profile> {
                     );
             }),
         SizedBox(height: 16),
-        Text(
-          userModel.namaUser,
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          "",
-          style: TextStyle(
-            fontSize: 16.0,
-            color: Colors.grey,
-          ),
+        StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection("users")
+                .doc(userId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.data == null) {
+                return Text(" ");
+              }
+              return Column(
+                children: [
+                  Text(
+                    snapshot.data?.get("nama_user"),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    snapshot.data?.get("email"),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              );
+            }),
+        SizedBox(
+          height: 15,
         ),
         ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.green),
+              elevation: MaterialStatePropertyAll(5)),
           onPressed: () async {
             try {
               File selectedFile = await getImage();
@@ -196,10 +222,22 @@ class _ProfileState extends State<Profile> {
                   SnackBar(content: Text('Failed to upload image: $e')));
             }
           },
-          child: Text('Ganti Profile'),
+          child: Text(
+            'Ganti Profile',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );
+  }
+
+  void getData() async {
+    loading = true;
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      userId = currentUser.uid;
+    }
+    loading = false;
   }
 
   Widget _buildMenuOption(
@@ -207,9 +245,10 @@ class _ProfileState extends State<Profile> {
       required String title,
       required Function() onTap}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue),
+      leading: Icon(icon, color: Colors.green),
       title: Text(title),
       onTap: onTap,
+      hoverColor: Colors.grey[100],
     );
   }
 

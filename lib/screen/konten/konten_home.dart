@@ -1,5 +1,4 @@
 import 'package:cuci_mobil/screen/konten/button_position.dart';
-import 'package:cuci_mobil/model/model.dart';
 import 'package:cuci_mobil/model/model_user.dart';
 import 'package:cuci_mobil/screen/menu/review_tampat.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -9,9 +8,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class Konten extends StatefulWidget {
-  final CarWash carWash;
+  final String ownerName;
+  final String ownerNumber;
+  final String about;
+  final String placeAddress;
+  final String placeName;
+  final String placeRating;
+  final String placeReview;
+  final String carWashImageUrl;
 
-  Konten(this.carWash);
+  Konten(
+      {required this.ownerName,
+      required this.ownerNumber,
+      required this.about,
+      required this.placeAddress,
+      required this.placeName,
+      required this.placeRating,
+      required this.placeReview,
+      required this.carWashImageUrl});
 
   @override
   _KontenState createState() => _KontenState();
@@ -33,11 +47,11 @@ class _KontenState extends State<Konten> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _header(context, widget.carWash),
+            _header(context),
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: _isiKonten(context, widget.carWash),
+              child: _isiKonten(context),
             ),
           ],
         ),
@@ -46,7 +60,7 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _header(BuildContext context, CarWash carWash) {
+  Widget _header(BuildContext context,) {
     return SizedBox(
       height: 350,
       width: MediaQuery.of(context).size.width,
@@ -54,7 +68,7 @@ class _KontenState extends State<Konten> {
         decoration: BoxDecoration(
           color: Colors.blue,
           image: DecorationImage(
-            image: NetworkImage(widget.carWash.imgUrl),
+            image: NetworkImage(widget.carWashImageUrl),
             fit: BoxFit.cover,
           ),
         ),
@@ -155,7 +169,7 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _infoKontak(BuildContext context, CarWash carWash) {
+  Widget _infoKontak(BuildContext context,) {
     return Container(
       height: 90,
       width: 450,
@@ -181,7 +195,7 @@ class _KontenState extends State<Konten> {
                       Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      image: NetworkImage(carWash.imgPemilik),
+                      image: NetworkImage(widget.carWashImageUrl),
                       fit: BoxFit.cover)),
             ),
             SizedBox(
@@ -192,11 +206,11 @@ class _KontenState extends State<Konten> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  carWash.namaPemilik,
+                  widget.ownerName,
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  carWash.nomorPemilik,
+                  widget.ownerNumber,
                   style: TextStyle(fontSize: 16.0),
                 )
               ],
@@ -207,7 +221,7 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _isiKonten(BuildContext context, CarWash carWash) {
+  Widget _isiKonten(BuildContext context,) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -244,9 +258,9 @@ class _KontenState extends State<Konten> {
                           color: Colors.yellow,
                         ),
                         Text(
-                          carWash.reviewTempat.toString() +
+                           widget.placeRating.toString() +
                               " " +
-                              carWash.ratingTempat,
+                              widget.placeReview,
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ],
@@ -265,11 +279,11 @@ class _KontenState extends State<Konten> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                carWash.namaTempat,
+                widget.placeName,
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               Text(
-                carWash.alamatTempat,
+                widget.placeAddress,
                 style: TextStyle(fontSize: 14.0),
               )
             ],
@@ -291,7 +305,7 @@ class _KontenState extends State<Konten> {
                 height: 10,
               ),
               ExpandableText(
-                carWash.about,
+                widget.about,
                 expandText: 'Selengkapnya',
                 collapseText: 'Sembunyikan',
                 maxLines: 5,
@@ -309,16 +323,16 @@ class _KontenState extends State<Konten> {
           "Kontak",
           style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
         ),
-        _infoKontak(context, widget.carWash),
+        _infoKontak(context),
         SizedBox(
           height: 20,
         ),
-        _review(context, widget.carWash)
+        _review(context)
       ],
     );
   }
 
-  Widget _review(BuildContext context, CarWash carWash) {
+  Widget _review(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -335,7 +349,7 @@ class _KontenState extends State<Konten> {
                       style: TextStyle(
                           fontSize: 14.0, fontWeight: FontWeight.w500),
                     ),
-                    _nilaiReview(context, carWash)
+                    _nilaiReview(context)
                   ],
                 ),
               ),
@@ -448,8 +462,8 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _nilaiReview(BuildContext context, CarWash carWash) {
-    double _rating = carWash.reviewTempat;
+  Widget _nilaiReview(BuildContext context) {
+    double _rating = double.parse(widget.placeRating);
     return Row(
       children: [
         RatingBar.builder(
@@ -473,7 +487,7 @@ class _KontenState extends State<Konten> {
         SizedBox(
           width: 5,
         ),
-        Text(carWash.reviewTempat.toString() + "/5 " + carWash.ratingTempat)
+        Text(widget.placeRating.toString() + "/5 " + widget.placeReview)
       ],
     );
   }

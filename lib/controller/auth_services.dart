@@ -102,5 +102,9 @@ class AuthService {
     return await snapshot.ref.getDownloadURL();
   }
 
+  Future<Stream<QuerySnapshot>> getProduct() async {
+    return await _firestore.collection('car_wash_places').snapshots();
+  }
+
   static Stream<User?> get firebaseUserStream => _auth.authStateChanges();
 }

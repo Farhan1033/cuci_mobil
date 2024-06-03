@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cuci_mobil/screen/konten/konten_home.dart';
-import 'package:cuci_mobil/model/model.dart';
+import 'package:cuci_mobil/model/carwash.dart';
 import 'package:flutter/widgets.dart';
 
 class Home extends StatefulWidget {
@@ -20,17 +21,18 @@ class _HomeState extends State<Home> {
   Timer? _timer;
   bool _isFading = false;
   List<CarWash> list = [];
-  List<CarWash> listRating = [];
+  List<CarWash> originalList = [];
   bool search = false;
   Widget? searchNamaTempat = Text("Tempat Cuci Mobil");
   double selectedRating = 0.0;
 
+  Stream<QuerySnapshot>? categoryStream;
+
   @override
   void initState() {
-    getData();
     super.initState();
-    listRating.addAll(CarWash_List);
-    list.addAll(CarWash_List);
+    getData();
+    getontheload();
     controller.addListener(() {
       setState(() {
         currentPageValue = controller.page!;
@@ -41,9 +43,14 @@ class _HomeState extends State<Home> {
     });
   }
 
+  getontheload() async {
+    categoryStream = await AuthService().getProduct();
+    setState(() {});
+  }
+
   void _startAutoScroll() {
     _timer = Timer.periodic(Duration(seconds: 3), (timer) async {
-      if (controller.page!.round() == CarWash_List.length - 1) {
+      if (controller.page!.round() == list.length - 1) {
         setState(() {
           _isFading = true;
         });
@@ -63,6 +70,7 @@ class _HomeState extends State<Home> {
 
   late String userId;
   bool loading = true;
+
   void getData() async {
     loading = true;
     User? currentUser = FirebaseAuth.instance.currentUser;
@@ -84,37 +92,34 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(0),
-        child: AppBar(
-          toolbarHeight: 0,
-        ),
+        child: AppBar(toolbarHeight: 0),
       ),
       body: ListView(
         padding: EdgeInsets.all(8.0),
         children: [
           ListTile(
-            title: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("users")
-                    .doc(userId)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) {
-                    return Text(" ");
-                  }
-                  return Text(
-                    "Halo, " + snapshot.data?.get("nama_user"),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  );
-                }),
+            title: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(userId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return Text(" ");
+                }
+                return Text(
+                  "Halo, ${snapshot.data!['nama_user']}",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                );
+              },
+            ),
             subtitle: Text(
               "Ayo Bersihkan Mobilmu hari ini!",
               style: TextStyle(fontSize: 16.0),
             ),
           ),
           _gambarBergerak(context),
-          SizedBox(
-            height: 15,
-          ),
+          SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14.0),
             child: Row(
@@ -154,28 +159,151 @@ class _HomeState extends State<Home> {
                   ),
                   child: IconButton(
                     icon: Icon(Icons.tune, color: Colors.white),
-                    onPressed: () {
-                      _showFilterDialog();
-                    },
+                    onPressed: _showFilterDialog,
                   ),
                 ),
               ],
             ),
           ),
           SizedBox(height: 10),
-          ListView.builder(
+          allProduct()
+        ],
+      ),
+    );
+  }
+
+  Widget _gambarBergerak(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: _isFading ? 0.0 : 1.0,
+      duration: Duration(milliseconds: 500),
+      child: Container(
+        height: 225,
+        width: MediaQuery.of(context).size.width,
+        child: PageView.builder(
+          controller: controller,
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            double different = index - currentPageValue;
+            if (different < 0) {
+              different *= 1;
+            }
+            different = min(1, different);
+            final carWash = list[index];
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Konten(
+                          ownerName: carWash.ownerName,
+                          ownerNumber: carWash.ownerNumber,
+                          about: carWash.about,
+                          placeAddress: carWash.placeAddress,
+                          placeName: carWash.placeName,
+                          placeRating: carWash.placeRating.toString(),
+                          placeReview: carWash.placeReview.toString(),
+                          carWashImageUrl: carWash.carWashImageUrl),
+                    ),
+                  );
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(carWash.carWashImageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 18.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          carWash.placeName,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          carWash.placeAddress,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                            wordSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget allProduct() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: categoryStream,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.data!.docs.isEmpty) {
+          return Center(child: Text("Data tidak ditemukan"));
+        } else {
+          originalList = snapshot.data!.docs.map((doc) {
+            return CarWash(
+              ownerName: doc['owner_name'],
+              ownerNumber: doc['owner_number'],
+              about: doc['about'],
+              placeAddress: doc['place_address'],
+              placeName: doc['place_name'],
+              placeRating: double.parse(doc['place_rating']),
+              placeReview: doc['place_review'],
+              carWashImageUrl: doc['gambar_cuci_mobil'],
+            );
+          }).toList();
+
+          if (list.isEmpty) {
+            list = List.from(originalList);
+          }
+
+          return ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: list.length,
+            itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              final carWash = list[index];
+              DocumentSnapshot ds = snapshot.data!.docs[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Konten(carWash),
-                    ),
+                        builder: (context) => Konten(
+                              ownerName: ds['owner_name'],
+                              ownerNumber: ds['owner_number'],
+                              about: ds['about'],
+                              placeAddress: ds['place_address'],
+                              placeName: ds['place_name'],
+                              placeRating: ds['place_rating'],
+                              placeReview: ds['place_review'],
+                              carWashImageUrl: ds['gambar_cuci_mobil'],
+                            )),
                   );
                 },
                 child: Container(
@@ -201,9 +329,7 @@ class _HomeState extends State<Home> {
                         child: Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(
-                                carWash.imgUrl,
-                              ),
+                              image: NetworkImage(ds['gambar_cuci_mobil']),
                               fit: BoxFit.cover,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -215,22 +341,22 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            carWash.namaTempat,
+                            ds['place_name'],
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                             ),
                           ),
                           Text(
-                            carWash.alamatTempat,
+                            ds['place_address'],
                             style: TextStyle(fontSize: 12.0),
                           ),
                           Row(
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
-                              Text(carWash.reviewTempat.toString() +
+                              Text(ds['place_rating'].toString() +
                                   " " +
-                                  carWash.ratingTempat),
+                                  ds['place_review'].toString()),
                             ],
                           ),
                         ],
@@ -240,82 +366,9 @@ class _HomeState extends State<Home> {
                 ),
               );
             },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _gambarBergerak(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: _isFading ? 0.0 : 1.0,
-      duration: Duration(milliseconds: 500),
-      child: Container(
-        height: 225,
-        width: MediaQuery.of(context).size.width,
-        child: PageView.builder(
-          controller: controller,
-          itemCount: CarWash_List.length,
-          itemBuilder: (context, index) {
-            double different = index - currentPageValue;
-            if (different < 0) {
-              different *= 1;
-            }
-            different = min(1, different);
-            final carWash = CarWash_List[index];
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Konten(carWash),
-                      ));
-                });
-              },
-              child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(carWash.imgUrl),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 18.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            carWash.namaTempat,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            carWash.alamatTempat,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.0,
-                                wordSpacing: 0.5),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )),
-            );
-          },
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 
@@ -332,7 +385,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Pilih rating:"),
-                  StatefulBuilder(builder: (context, State) {
+                  StatefulBuilder(builder: (context, StateSetter setState) {
                     return Slider(
                       value: selectedRating,
                       min: 0.0,
@@ -340,7 +393,7 @@ class _HomeState extends State<Home> {
                       divisions: 50,
                       label: selectedRating.toStringAsFixed(1),
                       onChanged: (double value) {
-                        State(() {
+                        setState(() {
                           selectedRating = value;
                         });
                       },
@@ -376,8 +429,8 @@ class _HomeState extends State<Home> {
 
   void _filterByRating() {
     setState(() {
-      list = CarWash_List.where((item) {
-        final rating = item.reviewTempat;
+      list = originalList.where((item) {
+        final rating = item.placeRating;
         return rating == selectedRating;
       }).toList();
     });
@@ -388,12 +441,11 @@ class _HomeState extends State<Home> {
       if (name.isEmpty) {
         _resetList();
       } else {
-        list = CarWash_List.where((item) =>
-                item.namaTempat.toLowerCase().contains(name.toLowerCase()))
+        list = originalList
+            .where((item) =>
+                item.placeName.toLowerCase().contains(name.toLowerCase()))
             .toList();
       }
-    });
-    setState(() {
       searchNamaTempat =
           name.isEmpty ? Text("Tempat Cuci Mobil") : Text("Hasil Pencarian");
     });
@@ -401,11 +453,8 @@ class _HomeState extends State<Home> {
 
   void _resetList() {
     setState(() {
-      list.clear();
-      list.addAll(CarWash_List);
+      list = List.from(originalList);
       cariController.clear();
-    });
-    setState(() {
       searchNamaTempat = Text("Tempat Cuci Mobil");
     });
   }

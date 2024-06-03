@@ -176,18 +176,17 @@ class _Booking_tempatState extends State<Booking_tempat> {
         },
       );
       if (result == true) {
-        setState(() {
-          _counter++;
-        });
         try {
+          setState(() {
+            _counter++;
+          });
           await AuthService.saveBookingToFirebase(
               _nameController.text,
               _numberController.text,
               _dateController.text,
               _idPilihan,
               _harga.toDouble(),
-              _counter
-              );
+              _counter);
 
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Booking()));

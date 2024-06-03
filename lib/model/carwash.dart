@@ -7,7 +7,6 @@ class CarWash {
   String? placeReview;
   String about;
   String carWashImageUrl;
-  String ownerProfileImageUrl;
 
   CarWash({
     required this.ownerName,
@@ -18,7 +17,6 @@ class CarWash {
     this.placeReview,
     required this.about,
     required this.carWashImageUrl,
-    required this.ownerProfileImageUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,7 +29,6 @@ class CarWash {
       'placeReview': "0",
       'about': about,
       'carWashImageUrl': carWashImageUrl,
-      'ownerProfileImageUrl': ownerProfileImageUrl,
     };
   }
 }

@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CarWashForm extends StatefulWidget {
+
   @override
   _CarWashFormState createState() => _CarWashFormState();
 }
@@ -80,6 +81,8 @@ class _CarWashFormState extends State<CarWashForm> {
           'place_address': placeAddressController.text,
           'about': aboutController.text,
           'gambar_cuci_mobil': gambarPATH1,
+          'place_rating': '0',
+          'place_review': "0",
           'user_id': userId,
         });
 
