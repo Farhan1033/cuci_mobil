@@ -22,19 +22,17 @@ class AuthService {
   }
 
   static Future<void> saveBookingToFirebase(String name, String phoneNumber,
-      String bookingDate, int jenisCuciId, double harga, int counter) async {
+      String bookingDate, String jenisCuci, double harga, int counter) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       try {
-        await _firestore
-            .collection("booking")
-            .doc(currentUser.uid)
-            .collection("bookings")
-            .add({
+        await _firestore.collection("booking").add({
+          'userId': currentUser
+              .uid, // Add user ID to identify the owner of the booking
           'name': name,
           'phoneNumber': phoneNumber,
           'bookingDate': bookingDate,
-          'jenisCuciId': jenisCuciId,
+          'jenisCuci': jenisCuci,
           'harga': harga,
           'timestamp': FieldValue.serverTimestamp(),
           'antrian': counter
@@ -104,6 +102,26 @@ class AuthService {
 
   Future<Stream<QuerySnapshot>> getProduct() async {
     return await _firestore.collection('car_wash_places').snapshots();
+  }
+
+  Future<Stream<QuerySnapshot>> getAntrian() async {
+    // return await _firestore.collection('booking').snapshots();
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+            .collection('booking')
+            .where(user.uid)
+            .snapshots();
+        return stream;
+      } catch (e) {
+        print(e.toString());
+        return Stream.error(e);
+      }
+    } else {
+      return Stream.error('User not logged in');
+    }
   }
 
   static Stream<User?> get firebaseUserStream => _auth.authStateChanges();

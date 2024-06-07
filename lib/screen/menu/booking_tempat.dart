@@ -14,6 +14,7 @@ class Booking_tempat extends StatefulWidget {
 
 class _Booking_tempatState extends State<Booking_tempat> {
   var _idPilihan = 0;
+  String _jeniscuci = "";
   var _harga = 0;
   var _counter = 0;
   FocusNode _focusNode = FocusNode();
@@ -184,7 +185,7 @@ class _Booking_tempatState extends State<Booking_tempat> {
               _nameController.text,
               _numberController.text,
               _dateController.text,
-              _idPilihan,
+              _jeniscuci,
               _harga.toDouble(),
               _counter);
 
@@ -399,6 +400,7 @@ class _Booking_tempatState extends State<Booking_tempat> {
                 setState(() {
                   _idPilihan = selected ? a.id : 0;
                   _harga = selected ? a.harga : 0;
+                  _jeniscuci = selected ? a.label : "";
                 });
               },
             );
