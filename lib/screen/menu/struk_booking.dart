@@ -1,5 +1,6 @@
 import 'package:cuci_mobil/main.dart';
-import 'package:cuci_mobil/screen/menu/komen.dart';
+import 'package:cuci_mobil/screen/main_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,7 +9,7 @@ void main(List<String> args) {
   runApp(MyApp());
 }
 
-class KomenUser extends StatefulWidget {
+class StruckBooking extends StatefulWidget {
   final String namaTempat;
   final String alamatTempat;
   final String tanggalBooking;
@@ -17,7 +18,7 @@ class KomenUser extends StatefulWidget {
   final String jenisCuci;
   final String hargaCuci;
 
-  KomenUser(
+  StruckBooking(
       {required this.namaTempat,
       required this.alamatTempat,
       required this.tanggalBooking,
@@ -27,10 +28,11 @@ class KomenUser extends StatefulWidget {
       required this.hargaCuci});
 
   @override
-  State<KomenUser> createState() => _KomenUserState();
+  State<StruckBooking> createState() => _StruckBookingState();
 }
 
-class _KomenUserState extends State<KomenUser> {
+class _StruckBookingState extends State<StruckBooking> {
+  User? _user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,61 +141,31 @@ class _KomenUserState extends State<KomenUser> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.grey, width: 1)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          SizedBox(
-            height: 60,
-            width: 100,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Text(
-                "Back",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
+      child: SizedBox(
+        height: 60,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MainPage(_user)),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          SizedBox(
-            height: 60,
-            width: 250,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Komen(),
-                    ));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.green, width: 2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Text(
-                "Nilai Tempat Cuci",
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
+          child: Text(
+            "BACK HOME",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
           ),
-        ],
+        ),
       ),
     );
   }

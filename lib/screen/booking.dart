@@ -1,6 +1,7 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cuci_mobil/controller/auth_services.dart";
 import "package:cuci_mobil/model/history.dart";
+import "package:cuci_mobil/screen/menu/komen_user.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 
@@ -62,7 +63,18 @@ class _BookingState extends State<Booking> {
             DocumentSnapshot ds = bookings[index];
             return GestureDetector(
               onTap: () {
-                // Handle tap if needed
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => KomenUser(
+                          namaTempat: ds['namaTempat'],
+                          alamatTempat: ds['alamatTempat'],
+                          tanggalBooking: ds['bookingDate'],
+                          namaUser: ds['name'],
+                          nomorUser: ds['phoneNumber'],
+                          jenisCuci: ds['jenisCuci'],
+                          hargaCuci: ds['harga'].toString()),
+                    ));
               },
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -82,43 +94,6 @@ class _BookingState extends State<Booking> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: 100,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade400,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "No. Antrian",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Divider(
-                            height: 10,
-                            color: Colors.white,
-                            thickness: 1,
-                            indent: 10,
-                            endIndent: 10,
-                          ),
-                          Text(
-                            ds['antrian'].toString(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

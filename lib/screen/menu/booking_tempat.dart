@@ -1,12 +1,15 @@
 import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:cuci_mobil/model/list_cucimobil.dart';
-import 'package:cuci_mobil/screen/booking.dart';
+import 'package:cuci_mobil/screen/menu/struk_booking.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class Booking_tempat extends StatefulWidget {
-  const Booking_tempat({super.key});
+  final String namaTempat;
+  final String alamatTempat;
+
+  Booking_tempat({required this.namaTempat, required this.alamatTempat});
 
   @override
   State<Booking_tempat> createState() => _Booking_tempatState();
@@ -20,10 +23,9 @@ class _Booking_tempatState extends State<Booking_tempat> {
   FocusNode _focusNode = FocusNode();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _numberFocusNode = FocusNode();
-
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _numberController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _numberController = TextEditingController();
 
   void dispose() {
     _dateController.dispose();
@@ -148,55 +150,103 @@ class _Booking_tempatState extends State<Booking_tempat> {
   }
 
   void _showAlertPilihan(BuildContext context) async {
-    if (_nameController.text.isEmpty ||
-        _numberController.text.isEmpty ||
-        _dateController.text.isEmpty ||
-        _idPilihan == 0) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Peringatan'),
-            content: Text('Harap isi semua field terlebih dahulu.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      final result = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return _alertPilihan(context);
-        },
-      );
-      if (result == true) {
-        try {
-          setState(() {
-            _counter++;
-          });
-          await AuthService.saveBookingToFirebase(
-              _nameController.text,
-              _numberController.text,
-              _dateController.text,
-              _jeniscuci,
-              _harga.toDouble(),
-              _counter);
+  final String placeName = widget.namaTempat;
+  final String placeAddress = widget.alamatTempat;
 
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Booking()));
-        } catch (e) {
-          print(e.toString());
-        }
+  if (_nameController.text.isEmpty ||
+      _numberController.text.isEmpty ||
+      _dateController.text.isEmpty ||
+      _idPilihan == 0) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Peringatan'),
+          content: Text('Harap isi semua field terlebih dahulu.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return _alertPilihan(context);
+      },
+    );
+
+    if (result == true) {
+      try {
+        // Debugging: Print values to console
+        print('Name: ${_nameController.text}');
+        print('Number: ${_numberController.text}');
+        print('Date: ${_dateController.text}');
+        print('Place Name: $placeName');
+        print('Place Address: $placeAddress');
+
+        // Ensure setState doesn't block async call
+        setState(() {
+          _counter++;
+        });
+
+        await AuthService.saveBookingToFirebase(
+          _nameController.text,
+          _numberController.text,
+          _dateController.text,
+          _jeniscuci,
+          _harga.toDouble(),
+          _counter,
+          placeName,
+          placeAddress,
+        );
+
+        // Navigation after saving data
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StruckBooking(
+              namaTempat: placeName,
+              alamatTempat: placeAddress,
+              tanggalBooking: _dateController.text,
+              namaUser: _nameController.text,
+              nomorUser: _numberController.text,
+              jenisCuci: _jeniscuci,
+              hargaCuci: _harga.toString(),
+            ),
+          ),
+        );
+
+      } catch (e) {
+        print('Error saving booking: ${e.toString()}');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('Failed to save booking: ${e.toString()}'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       }
     }
   }
+}
+
 
   Widget _textfieldBooking(BuildContext context) {
     return Column(

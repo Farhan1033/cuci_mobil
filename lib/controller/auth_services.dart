@@ -21,8 +21,15 @@ class AuthService {
     }
   }
 
-  static Future<void> saveBookingToFirebase(String name, String phoneNumber,
-      String bookingDate, String jenisCuci, double harga, int counter) async {
+  static Future<void> saveBookingToFirebase(
+      String name,
+      String phoneNumber,
+      String bookingDate,
+      String jenisCuci,
+      double harga,
+      int counter,
+      String placeName,
+      String placeAddress) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       try {
@@ -35,7 +42,9 @@ class AuthService {
           'jenisCuci': jenisCuci,
           'harga': harga,
           'timestamp': FieldValue.serverTimestamp(),
-          'antrian': counter
+          'antrian': counter,
+          'namaTempat': placeName,
+          'alamatTempat': placeAddress
         });
         print("Booking added successfully!");
       } catch (e) {

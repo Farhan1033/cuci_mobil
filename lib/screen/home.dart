@@ -279,31 +279,32 @@ class _HomeState extends State<Home> {
             );
           }).toList();
 
-          if (list.isEmpty) {
+          if (list.isEmpty || !search) {
             list = List.from(originalList);
           }
 
           return ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: snapshot.data!.docs.length,
+            itemCount: list.length,
             itemBuilder: (context, index) {
-              DocumentSnapshot ds = snapshot.data!.docs[index];
+              final carWash = list[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Konten(
-                              ownerName: ds['owner_name'],
-                              ownerNumber: ds['owner_number'],
-                              about: ds['about'],
-                              placeAddress: ds['place_address'],
-                              placeName: ds['place_name'],
-                              placeRating: ds['place_rating'],
-                              placeReview: ds['place_review'],
-                              carWashImageUrl: ds['gambar_cuci_mobil'],
-                            )),
+                      builder: (context) => Konten(
+                        ownerName: carWash.ownerName,
+                        ownerNumber: carWash.ownerNumber,
+                        about: carWash.about,
+                        placeAddress: carWash.placeAddress,
+                        placeName: carWash.placeName,
+                        placeRating: carWash.placeRating.toString(),
+                        placeReview: carWash.placeReview.toString(),
+                        carWashImageUrl: carWash.carWashImageUrl,
+                      ),
+                    ),
                   );
                 },
                 child: Container(
@@ -329,7 +330,7 @@ class _HomeState extends State<Home> {
                         child: Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(ds['gambar_cuci_mobil']),
+                              image: NetworkImage(carWash.carWashImageUrl),
                               fit: BoxFit.cover,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -341,22 +342,21 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            ds['place_name'],
+                            carWash.placeName,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18.0,
                             ),
                           ),
                           Text(
-                            ds['place_address'],
+                            carWash.placeAddress,
                             style: TextStyle(fontSize: 12.0),
                           ),
                           Row(
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
-                              Text(ds['place_rating'].toString() +
-                                  " " +
-                                  ds['place_review'].toString()),
+                              Text(
+                                  "${carWash.placeRating} (${carWash.placeReview})"),
                             ],
                           ),
                         ],
@@ -385,20 +385,22 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Pilih rating:"),
-                  StatefulBuilder(builder: (context, StateSetter setState) {
-                    return Slider(
-                      value: selectedRating,
-                      min: 0.0,
-                      max: 5.0,
-                      divisions: 50,
-                      label: selectedRating.toStringAsFixed(1),
-                      onChanged: (double value) {
-                        setState(() {
-                          selectedRating = value;
-                        });
-                      },
-                    );
-                  }),
+                  StatefulBuilder(
+                    builder: (context, StateSetter setState) {
+                      return Slider(
+                        value: selectedRating,
+                        min: 0.0,
+                        max: 5.0,
+                        divisions: 50,
+                        label: selectedRating.toStringAsFixed(1),
+                        onChanged: (double value) {
+                          setState(() {
+                            selectedRating = value;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -429,6 +431,7 @@ class _HomeState extends State<Home> {
 
   void _filterByRating() {
     setState(() {
+      search = true;
       list = originalList.where((item) {
         final rating = item.placeRating;
         return rating == selectedRating;
@@ -438,13 +441,13 @@ class _HomeState extends State<Home> {
 
   void _searchName(String name) {
     setState(() {
+      search = true;
       if (name.isEmpty) {
         _resetList();
       } else {
-        list = originalList
-            .where((item) =>
-                item.placeName.toLowerCase().contains(name.toLowerCase()))
-            .toList();
+        list = originalList.where((item) {
+          return item.placeName.toLowerCase().contains(name.toLowerCase());
+        }).toList();
       }
       searchNamaTempat =
           name.isEmpty ? Text("Tempat Cuci Mobil") : Text("Hasil Pencarian");
@@ -453,6 +456,7 @@ class _HomeState extends State<Home> {
 
   void _resetList() {
     setState(() {
+      search = false;
       list = List.from(originalList);
       cariController.clear();
       searchNamaTempat = Text("Tempat Cuci Mobil");

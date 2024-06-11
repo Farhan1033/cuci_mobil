@@ -1,5 +1,5 @@
-import 'package:cuci_mobil/screen/konten/button_position.dart';
 import 'package:cuci_mobil/model/model_user.dart';
+import 'package:cuci_mobil/screen/menu/booking_tempat.dart';
 import 'package:cuci_mobil/screen/menu/review_tampat.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,11 +56,13 @@ class _KontenState extends State<Konten> {
           ],
         ),
       ),
-      bottomNavigationBar: ButtonPosition(),
+      bottomNavigationBar: tombolBooking(context),
     );
   }
 
-  Widget _header(BuildContext context,) {
+  Widget _header(
+    BuildContext context,
+  ) {
     return SizedBox(
       height: 350,
       width: MediaQuery.of(context).size.width,
@@ -169,7 +171,9 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _infoKontak(BuildContext context,) {
+  Widget _infoKontak(
+    BuildContext context,
+  ) {
     return Container(
       height: 90,
       width: 450,
@@ -221,7 +225,9 @@ class _KontenState extends State<Konten> {
     );
   }
 
-  Widget _isiKonten(BuildContext context,) {
+  Widget _isiKonten(
+    BuildContext context,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -258,9 +264,10 @@ class _KontenState extends State<Konten> {
                           color: Colors.yellow,
                         ),
                         Text(
-                           widget.placeRating.toString() +
+                          widget.placeRating.toString() +
                               " " +
-                              widget.placeReview,
+                              widget.placeReview +
+                              " Ulasan",
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ],
@@ -489,6 +496,45 @@ class _KontenState extends State<Konten> {
         ),
         Text(widget.placeRating.toString() + "/5 " + widget.placeReview)
       ],
+    );
+  }
+
+  Widget tombolBooking(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey, width: 1)),
+      child: SizedBox(
+        height: 60,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Booking_tempat(
+                      namaTempat: widget.placeName,
+                      alamatTempat: widget.placeAddress)),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            "BOOKING NOW",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
