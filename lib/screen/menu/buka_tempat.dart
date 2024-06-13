@@ -81,8 +81,8 @@ class _CarWashFormState extends State<CarWashForm> {
           'place_address': placeAddressController.text,
           'about': aboutController.text,
           'gambar_cuci_mobil': gambarPATH1,
-          'place_rating': '0',
-          'place_review': "0",
+          'place_rating': 0.0,
+          'place_review': 0,
           'user_id': userId,
         });
 

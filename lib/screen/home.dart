@@ -50,7 +50,8 @@ class _HomeState extends State<Home> {
 
   void _startAutoScroll() {
     _timer = Timer.periodic(Duration(seconds: 3), (timer) async {
-      if (controller.page!.round() == list.length - 1) {
+      final topThreeImages = list.sublist(0, 2);
+      if (controller.page!.round() == topThreeImages.length - 1) {
         setState(() {
           _isFading = true;
         });
@@ -273,8 +274,8 @@ class _HomeState extends State<Home> {
               about: doc['about'],
               placeAddress: doc['place_address'],
               placeName: doc['place_name'],
-              placeRating: double.parse(doc['place_rating']),
-              placeReview: doc['place_review'],
+              placeRating: double.tryParse(doc['place_rating'].toString()),
+              placeReview: doc['place_review'].toString(),
               carWashImageUrl: doc['gambar_cuci_mobil'],
             );
           }).toList();
@@ -356,7 +357,7 @@ class _HomeState extends State<Home> {
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
                               Text(
-                                  "${carWash.placeRating} (${carWash.placeReview})"),
+                                  "${carWash.placeRating} (${carWash.placeReview}) ulasan"),
                             ],
                           ),
                         ],

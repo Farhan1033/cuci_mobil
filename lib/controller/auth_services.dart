@@ -34,15 +34,13 @@ class AuthService {
     if (currentUser != null) {
       try {
         await _firestore.collection("booking").add({
-          'userId': currentUser
-              .uid, // Add user ID to identify the owner of the booking
+          'userId': currentUser.uid,
           'name': name,
           'phoneNumber': phoneNumber,
           'bookingDate': bookingDate,
           'jenisCuci': jenisCuci,
           'harga': harga,
           'timestamp': FieldValue.serverTimestamp(),
-          'antrian': counter,
           'namaTempat': placeName,
           'alamatTempat': placeAddress
         });
@@ -98,6 +96,36 @@ class AuthService {
       print('User signed out successfully');
     } catch (e) {
       print('Error signing out: $e');
+    }
+  }
+
+  static Future<void> updateAverageRating(String placeName) async {
+    try {
+      var snapshot = await _firestore.collection('komen_user').get();
+
+      double totalRating = 0.0;
+      int count = snapshot.docs.length;
+
+      for (var doc in snapshot.docs) {
+        totalRating += doc['rating'] as num;
+      }
+
+      double averageRating = count > 0 ? totalRating / count : 0.0;
+      int totalReview = count;
+
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('car_wash_places')
+          .where('place_name', isEqualTo: placeName)
+          .get();
+
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        await _firestore.collection('car_wash_places').doc(doc.id).update({
+          'place_rating': averageRating,
+          'place_review' : totalReview
+        });
+      }
+    } catch (e) {
+      print("Error updating ratings: $e");
     }
   }
 

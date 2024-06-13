@@ -85,6 +85,14 @@ class _ProfileState extends State<Profile> {
                     ),
                     Divider(),
                     _buildMenuOption(
+                      icon: Icons.favorite,
+                      title: "Favorite",
+                      onTap: () {
+                        // Implementasi untuk melihat tentang aplikasi
+                      },
+                    ),
+                    Divider(),
+                    _buildMenuOption(
                       icon: Icons.info,
                       title: "About",
                       onTap: () {

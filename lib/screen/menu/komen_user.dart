@@ -173,7 +173,7 @@ class _KomenUserState extends State<KomenUser> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Komen(),
+                      builder: (context) => Komen(placeName: widget.namaTempat),
                     ));
               },
               style: ElevatedButton.styleFrom(
