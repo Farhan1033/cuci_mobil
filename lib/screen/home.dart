@@ -49,8 +49,15 @@ class _HomeState extends State<Home> {
   }
 
   void _startAutoScroll() {
+    if (list.length < 2) {
+      print("Not enough items in the list to start auto-scrolling.");
+      return;
+    }
+
     _timer = Timer.periodic(Duration(seconds: 3), (timer) async {
-      final topThreeImages = list.sublist(0, 2);
+      final topThreeImages = list.sublist(
+          0, 2); // This will now always succeed due to the check above
+
       if (controller.page!.round() == topThreeImages.length - 1) {
         setState(() {
           _isFading = true;
@@ -357,7 +364,7 @@ class _HomeState extends State<Home> {
                             children: [
                               Icon(Icons.star, color: Colors.yellow),
                               Text(
-                                  "${carWash.placeRating} (${carWash.placeReview}) ulasan"),
+                                  "${carWash.placeRating!.toStringAsFixed(2)} (${carWash.placeReview} ulasan)"),
                             ],
                           ),
                         ],

@@ -1,4 +1,5 @@
-import 'package:cuci_mobil/model/model_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cuci_mobil/model/userkomen.dart';
 import 'package:cuci_mobil/screen/menu/booking_tempat.dart';
 import 'package:cuci_mobil/screen/menu/review_tampat.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -263,12 +264,25 @@ class _KontenState extends State<Konten> {
                           Icons.star,
                           color: Colors.yellow,
                         ),
-                        Text(
-                          widget.placeRating.toString() +
-                              " " +
-                              widget.placeReview +
-                              " Ulasan",
-                          style: TextStyle(fontSize: 16.0),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ReviewTempatFull(
+                                      namaTempat: widget.placeName,
+                                    ),
+                                  ));
+                            });
+                          },
+                          child: Text(
+                            double.parse(widget.placeRating)
+                                    .toStringAsFixed(2) +
+                                " " +
+                                ("(${widget.placeReview} ulasan)"),
+                            style: TextStyle(fontSize: 16.0),
+                          ),
                         ),
                       ],
                     ),
@@ -340,132 +354,165 @@ class _KontenState extends State<Konten> {
   }
 
   Widget _review(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Penilian Tempat",
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.w500),
-                    ),
-                    _nilaiReview(context)
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ReviewTempatFull(),
-                        ));
-                  });
-                },
-                child: Container(
-                  height: 25,
-                  child: Center(
-                    child: Text(
-                      "Lihat Semua >",
-                      style: TextStyle(color: Colors.green, fontSize: 14.0),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-          Divider(
-            height: 20,
-          ),
-          _komenUser(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _komenUser(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: UserModel_List.map((userModel) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(3, 2),
-                  color: Colors.grey.withOpacity(0.3),
-                  blurRadius: 3,
-                )
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(userModel.imgProfile),
-                    radius: 25,
-                    backgroundColor: Colors.grey.withOpacity(0.3),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
+                  Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          userModel.namaUser,
+                          "Penilian Tempat",
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                              fontSize: 14.0, fontWeight: FontWeight.w500),
                         ),
-                        RatingBar.builder(
-                          initialRating: userModel.ratingUser,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemSize: 18,
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          onRatingUpdate: (rating) {
-                            setState(() {
-                              userModel.ratingUser = rating;
-                            });
-                          },
+                        _nilaiReview(context)
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReviewTempatFull(
+                                namaTempat: widget.placeName,
+                              ),
+                            ));
+                      });
+                    },
+                    child: Container(
+                      height: 25,
+                      child: Center(
+                        child: Text(
+                          "Lihat Semua >",
+                          style: TextStyle(color: Colors.green, fontSize: 14.0),
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          userModel.komenUser,
-                          style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Divider(
+                height: 20,
+              ),
+              _komenUser(context)
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _komenUser(BuildContext context) {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('komen_user')
+          .where('namaTempat', isEqualTo: widget.placeName)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.data!.docs.isEmpty) {
+          return Center(child: Text("Belum ada penilaian"));
+        } else {
+          var originalList = snapshot.data!.docs.map((doc) {
+            return userKomen(
+                komenUser: doc['komen'],
+                namaTempat: doc['namaTempat'],
+                ratingUser: doc['rating'],
+                userID: doc['userId'],
+                userEmail: doc['userEmail'],
+                userName: doc['userName']);
+          }).toList();
+
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: originalList.length,
+            itemBuilder: (context, index) {
+              var userModel = originalList[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(3, 2),
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 3,
+                      )
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Colors.grey.withOpacity(0.3),
+                          child: Icon(Icons.person),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userModel.userName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              RatingBar.builder(
+                                initialRating: userModel.ratingUser.toDouble(),
+                                minRating: 1,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemSize: 18,
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
+                                onRatingUpdate: (rating) {
+                                  setState(() {
+                                    userModel.ratingUser == rating;
+                                  });
+                                },
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                userModel.komenUser,
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(),
+                ),
+              );
+            },
+          );
+        }
+      },
     );
   }
 
@@ -494,7 +541,7 @@ class _KontenState extends State<Konten> {
         SizedBox(
           width: 5,
         ),
-        Text(widget.placeRating.toString() + "/5 " + widget.placeReview)
+        Text(double.parse(widget.placeRating).toStringAsFixed(2) + "/5.00 ")
       ],
     );
   }

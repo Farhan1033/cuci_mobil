@@ -11,5 +11,6 @@ class ListItemCuci {
     ListItemCuci(3, "Cuci Manual", 35000),
     ListItemCuci(4, "Cuci Underbody", 20000),
     ListItemCuci(5, "Cuci Poles", 25000),
+    ListItemCuci(6, "Cuci Salju", 60000)
   ];
 }

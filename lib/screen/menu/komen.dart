@@ -103,26 +103,50 @@ class _KomenState extends State<Komen> {
                           SnackBar(content: Text('Rating tidak boleh kosong')),
                         );
                       } else {
-                        // Anda bisa menambahkan logika pengiriman komentar dan rating di sini
                         User? currentUser = FirebaseAuth.instance.currentUser;
                         if (currentUser != null) {
                           try {
-                            await FirebaseFirestore.instance
-                                .collection('komen_user')
-                                .add({
-                              'userId': currentUser.uid,
-                              'rating': _rating,
-                              'komen': _commentController.text,
-                              'timestamp': FieldValue.serverTimestamp(),
-                              'namaTempat': widget.placeName
-                            });
-                            await AuthService.updateAverageRating(
-                                widget.placeName);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text('Komentar dan rating terkirim')),
-                            );
+                            DocumentSnapshot userDoc = await FirebaseFirestore
+                                .instance
+                                .collection('users')
+                                .doc(currentUser.uid)
+                                .get();
+
+                            if (userDoc.exists) {
+                              var userData =
+                                  userDoc.data() as Map<String, dynamic>? ?? {};
+
+                              var userName = userData['nama_user'] as String? ??
+                                  'Anonymous';
+                              var userEmail =
+                                  userData['email'] as String? ?? '';
+
+                              await FirebaseFirestore.instance
+                                  .collection('komen_user')
+                                  .add({
+                                'userId': currentUser.uid,
+                                'userName': userName,
+                                'userEmail': userEmail,
+                                'rating': _rating,
+                                'komen': _commentController.text,
+                                'timestamp': FieldValue.serverTimestamp(),
+                                'namaTempat': widget.placeName,
+                              });
+
+                              await AuthService.updateAverageRating(
+                                  widget.placeName);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Komentar dan rating terkirim')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Data pengguna tidak ditemukan')),
+                              );
+                            }
                           } catch (e) {
                             print(e.toString());
                             ScaffoldMessenger.of(context).showSnackBar(

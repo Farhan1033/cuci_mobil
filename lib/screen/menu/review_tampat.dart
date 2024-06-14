@@ -1,70 +1,129 @@
-import 'package:cuci_mobil/model/model_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cuci_mobil/model/userkomen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class ReviewTempatFull extends StatelessWidget {
-  const ReviewTempatFull({Key? key}) : super(key: key);
+class ReviewTempatFull extends StatefulWidget {
+  final String namaTempat;
 
+  ReviewTempatFull({required this.namaTempat});
+
+  @override
+  State<ReviewTempatFull> createState() => _ReviewTempatFullState();
+}
+
+class _ReviewTempatFullState extends State<ReviewTempatFull> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Semua Penilaian'),
       ),
-      body: ListView.builder(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        itemCount: UserModel_List.length,
-        itemBuilder: (context, index) {
-          UserModel user = UserModel_List[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(user.imgProfile),
-                      ),
-                      SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.namaUser,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            children: List.generate(5, (i) {
-                              return Icon(
-                                i < user.ratingUser
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                color: Colors.amber,
-                                size: 16,
-                              );
-                            }),
-                          ),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('komen_user')
+              .where('namaTempat', isEqualTo: widget.namaTempat)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.data!.docs.isEmpty) {
+              return Center(child: Text("Belum ada penilaian"));
+            } else {
+              var originalList = snapshot.data!.docs.map((doc) {
+                return userKomen(
+                    komenUser: doc['komen'],
+                    namaTempat: doc['namaTempat'],
+                    ratingUser: doc['rating'],
+                    userID: doc['userId'],
+                    userEmail: doc['userEmail'],
+                    userName: doc['userName']);
+              }).toList();
+        
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: originalList.length,
+                itemBuilder: (context, index) {
+                  var userModel = originalList[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(3, 2),
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 3,
+                          )
                         ],
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    user.komenUser,
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.grey.withOpacity(0.3),
+                              child: Icon(Icons.person),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userModel.userName,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  RatingBar.builder(
+                                    initialRating:
+                                        userModel.ratingUser.toDouble(),
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemSize: 18,
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      setState(() {
+                                        userModel.ratingUser == rating;
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    userModel.komenUser,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
