@@ -134,6 +134,7 @@ class _KomenUserState extends State<KomenUser> {
 
   Widget _buttonHome(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
           color: Colors.white,
@@ -143,8 +144,7 @@ class _KomenUserState extends State<KomenUser> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SizedBox(
-            height: 60,
-            width: 100,
+            height: 50,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -166,8 +166,7 @@ class _KomenUserState extends State<KomenUser> {
             ),
           ),
           SizedBox(
-            height: 60,
-            width: 250,
+            height: 50,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(

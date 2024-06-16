@@ -1,14 +1,13 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cuci_mobil/controller/auth_services.dart';
 import 'package:cuci_mobil/login%20dan%20register/login_page.dart';
 import 'package:cuci_mobil/model/model_user.dart';
 import 'package:cuci_mobil/screen/menu/buka_tempat.dart';
+import 'package:cuci_mobil/screen/menu/tentang.dart';
+import 'package:cuci_mobil/screen/menu/ubah_informasi.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -66,7 +65,11 @@ class _ProfileState extends State<Profile> {
                       icon: Icons.edit,
                       title: "Ubah Informasi",
                       onTap: () {
-                        // Implementasi untuk mengubah informasi
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UbahInfo(),
+                            ));
                       },
                     ),
                     Divider(),
@@ -85,18 +88,10 @@ class _ProfileState extends State<Profile> {
                     ),
                     Divider(),
                     _buildMenuOption(
-                      icon: Icons.favorite,
-                      title: "Favorite",
-                      onTap: () {
-                        // Implementasi untuk melihat tentang aplikasi
-                      },
-                    ),
-                    Divider(),
-                    _buildMenuOption(
                       icon: Icons.info,
                       title: "About",
                       onTap: () {
-                        // Implementasi untuk melihat tentang aplikasi
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Tentang(),));
                       },
                     ),
                     Divider(),
@@ -211,30 +206,6 @@ class _ProfileState extends State<Profile> {
         SizedBox(
           height: 15,
         ),
-        ElevatedButton(
-          style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.green),
-              elevation: MaterialStatePropertyAll(5)),
-          onPressed: () async {
-            try {
-              File selectedFile = await getImage();
-              String uploadedPath =
-                  await AuthService.uploadGambar(selectedFile);
-              setState(() {
-                gambarPATH1 = uploadedPath;
-              });
-              _updateData(gambarPATH1!);
-            } catch (e) {
-              print(e);
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to upload image: $e')));
-            }
-          },
-          child: Text(
-            'Ganti Profile',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
       ],
     );
   }
@@ -258,35 +229,5 @@ class _ProfileState extends State<Profile> {
       onTap: onTap,
       hoverColor: Colors.grey[100],
     );
-  }
-
-  Future<File> getImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    } else {
-      throw Exception('No image selected');
-    }
-  }
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  void _updateData(String newData) async {
-    if (currentUser != null) {
-      try {
-        await _firestore.collection('users').doc(currentUser!.uid).update({
-          'gambarProfile': FieldValue.arrayUnion([newData]),
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data updated successfully')),
-        );
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update data: $e')),
-        );
-      }
-    }
   }
 }

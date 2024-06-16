@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CarWashForm extends StatefulWidget {
-
   @override
   _CarWashFormState createState() => _CarWashFormState();
 }
@@ -208,6 +207,9 @@ class _CarWashFormState extends State<CarWashForm> {
                     height: 15,
                   ),
                   ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(Colors.green),
+                        elevation: MaterialStatePropertyAll(2)),
                     onPressed: () async {
                       try {
                         File selectedFile = await getImage();
@@ -223,12 +225,18 @@ class _CarWashFormState extends State<CarWashForm> {
                             content: Text('Failed to upload image: $e')));
                       }
                     },
-                    child: Text('Pilih Gambar'),
+                    child: Text(
+                      'Pilih Gambar',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 20),
               ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.green),
+                    elevation: MaterialStatePropertyAll(2)),
                 onPressed: () async {
                   try {
                     saveDataToFirestore();
@@ -238,7 +246,10 @@ class _CarWashFormState extends State<CarWashForm> {
                     print(e.toString());
                   }
                 },
-                child: Text('Simpan'),
+                child: Text(
+                  'Simpan',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

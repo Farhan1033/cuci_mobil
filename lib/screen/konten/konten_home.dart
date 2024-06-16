@@ -79,90 +79,22 @@ class _KontenState extends State<Konten> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 15, left: 16.0),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 35,
-                    width: 35,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.45),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 15, right: 16.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isFavorited =
-                              !isFavorited; // Toggle the favorite state
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Center(
-                          child: AnimatedSwitcher(
-                            duration: Duration(milliseconds: 300),
-                            child: isFavorited
-                                ? Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    key: ValueKey('red'),
-                                    size: 20,
-                                  )
-                                : Icon(
-                                    Icons.favorite,
-                                    size: 20,
-                                    color: Colors.white,
-                                    key: ValueKey('white'),
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () {
-                        // Add share functionality here
-                      },
-                      child: Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Icon(
-                          Icons.share,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
